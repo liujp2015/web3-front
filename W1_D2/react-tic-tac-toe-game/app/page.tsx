@@ -2,7 +2,7 @@ import Grid from "./components/Grid";
 
 export default function Home() {
   return (
-    // background Container  11122
+    // background Container
     <div className="flex justify-center items-center h-screen ">
       {/**
        *  Card Container
