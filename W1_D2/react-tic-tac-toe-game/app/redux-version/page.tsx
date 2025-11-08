@@ -1,27 +1,24 @@
 "use client";
 
-import SymbolSelector from "./components/SymbolSelector";
-import { useContext, useEffect, useState } from "react";
-import { AppContext } from "./context/AppContext";
-import Board from "./components/Board-context";
+import { useState } from "react";
+import SymbolSelector from "../components/SymbolSelector";
+import Board from "../components/Board-component";
 
 export default function Home() {
   // 状态管理
   const [showSymbolSelector, setShowSymbolSelector] = useState(false);
   const [playerSymbol, setPlayerSymbol] = useState<"X" | "O" | null>(null);
   const [computerSymbol, setComputerSymbol] = useState<"X" | "O" | null>(null);
-  // const [board, setBoard] = useState<Board>(
-  //   Array(3)
-  //     .fill(null)
-  //     .map(() => Array(3).fill(null))
-  // );
+  const [board, setBoard] = useState<Board>(
+    Array(3)
+      .fill(null)
+      .map(() => Array(3).fill(null))
+  );
   const [currentPlayer, setCurrentPlayer] = useState<"X" | "O" | null>(null);
   const [gameStatus, setGameStatus] = useState<string>("");
   const [moves, setMoves] = useState<
     { player: string; row: number; col: number }[]
   >([]);
-  const { handleClick, board, callParentFunction, setBoard, x, y } =
-    useContext(AppContext);
 
   // 检查棋盘是否已满
   const isBoardFull = (board: Board): boolean => {
@@ -153,16 +150,6 @@ export default function Home() {
     }, 500);
   };
 
-  useEffect(() => {
-    console.log("子组件改变了callParentFunction");
-    if (callParentFunction == true) {
-      console.log("执行函数");
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      handleCellClick(x as number, y as number);
-    }
-    handleClick(false);
-  }, [callParentFunction]);
-
   // 初始化游戏
   const initializeGame = (symbol: "X" | "O") => {
     const compSymbol = symbol === "X" ? "O" : "X";
@@ -225,7 +212,7 @@ export default function Home() {
       {/**
        *  background Container
        */}
-      <div className="flex justify-center items-start p-8 bg-gray-300 gap-6 min-h-screen">
+      <div className="flex justify-center items-center p-8 bg-gray-300 gap-6 min-h-screen">
         {/**
          *  Card Container
          */}
@@ -241,7 +228,7 @@ export default function Home() {
             </div>
           )}
 
-          <Board></Board>
+          <Board board={board} onclick={handleCellClick}></Board>
           <div className="flex justify-center mt-6">
             <button
               className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"

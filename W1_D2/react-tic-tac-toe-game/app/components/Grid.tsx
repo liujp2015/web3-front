@@ -1,5 +1,4 @@
 import clsx from "clsx";
-import { useContext } from "react";
 
 interface GridProps {
   className?: string;
@@ -16,7 +15,7 @@ const Grid: React.FC<GridProps> = ({
   return (
     <div
       className={clsx(
-        "inline-block border p-10 w-24 h-24 flex items-center justify-center cursor-pointer",
+        " border p-10 w-24 h-24 flex items-center justify-center cursor-pointer",
         className
       )}
       onClick={onClick}

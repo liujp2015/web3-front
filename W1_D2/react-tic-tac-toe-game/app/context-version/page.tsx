@@ -1,9 +1,8 @@
 "use client";
-
-import SymbolSelector from "./components/SymbolSelector";
 import { useContext, useEffect, useState } from "react";
-import { AppContext } from "./context/AppContext";
-import Board from "./components/Board-context";
+import { AppContext } from "../context/AppContext";
+import Board from "../components/Board-context";
+import SymbolSelector from "../components/SymbolSelector";
 
 export default function Home() {
   // 状态管理
@@ -157,6 +156,7 @@ export default function Home() {
     console.log("子组件改变了callParentFunction");
     if (callParentFunction == true) {
       console.log("执行函数");
+      console.log("x:", x, "y:", y);
       // eslint-disable-next-line react-hooks/set-state-in-effect
       handleCellClick(x as number, y as number);
     }
@@ -225,7 +225,7 @@ export default function Home() {
       {/**
        *  background Container
        */}
-      <div className="flex justify-center items-start p-8 bg-gray-300 gap-6 min-h-screen">
+      <div className="flex justify-center items-center p-8 bg-gray-300 gap-6 min-h-screen">
         {/**
          *  Card Container
          */}
