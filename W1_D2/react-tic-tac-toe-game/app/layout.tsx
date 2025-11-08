@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AppContext } from "./context/AppContext";
 import { useState } from "react";
+import StoreProvider from "./store/storeProvider";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -53,7 +54,7 @@ export default function RootLayout({
         <AppContext.Provider
           value={{ handleClick, board, callParentFunction, setBoard, x, y }}
         >
-          {children}
+          <StoreProvider>{children}</StoreProvider>
         </AppContext.Provider>
       </body>
     </html>

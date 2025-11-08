@@ -1,19 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SymbolSelector from "../components/SymbolSelector";
 import Board from "../components/Board-component";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../store";
+import { setBoard, setCallParentFunction } from "../store/gameSlice";
 
 export default function Home() {
+  const board = useSelector((state: RootState) => state.game.board);
+  const callParentFunction = useSelector(
+    (state: RootState) => state.game.callParentFunction
+  );
+  const x = useSelector((state: RootState) => state.game.x);
+  const y = useSelector((state: RootState) => state.game.y);
+  const dispatch = useDispatch();
+
   // 状态管理
   const [showSymbolSelector, setShowSymbolSelector] = useState(false);
   const [playerSymbol, setPlayerSymbol] = useState<"X" | "O" | null>(null);
   const [computerSymbol, setComputerSymbol] = useState<"X" | "O" | null>(null);
-  const [board, setBoard] = useState<Board>(
-    Array(3)
-      .fill(null)
-      .map(() => Array(3).fill(null))
-  );
   const [currentPlayer, setCurrentPlayer] = useState<"X" | "O" | null>(null);
   const [gameStatus, setGameStatus] = useState<string>("");
   const [moves, setMoves] = useState<
@@ -82,9 +88,14 @@ export default function Home() {
     }
 
     // 更新棋盘
-    const newBoard = [...board];
-    newBoard[row][col] = playerSymbol;
-    setBoard(newBoard);
+    const newBoard = board.map((innerArray, i) => {
+      if (i === row) {
+        return innerArray.map((cell, j) => (j === col ? playerSymbol : cell));
+      }
+      return innerArray;
+    });
+
+    dispatch(setBoard(newBoard));
 
     // 记录移动
     const newMoves = [...moves, { player: "玩家", row, col }];
@@ -122,9 +133,16 @@ export default function Home() {
       if (emptyCells.length > 0) {
         const [compRow, compCol] =
           emptyCells[Math.floor(Math.random() * emptyCells.length)];
-        const updatedBoard = [...newBoard];
-        updatedBoard[compRow][compCol] = computerSymbol!;
-        setBoard(updatedBoard);
+        const updatedBoard = newBoard.map((innerArray, i) => {
+          if (i === compRow) {
+            return innerArray.map((cell, j) =>
+              j === compCol ? computerSymbol : cell
+            );
+          }
+          return innerArray;
+        });
+
+        dispatch(setBoard(updatedBoard));
 
         // 记录电脑移动
         setMoves([...newMoves, { player: "电脑", row: compRow, col: compCol }]);
@@ -159,7 +177,7 @@ export default function Home() {
 
     setPlayerSymbol(symbol);
     setComputerSymbol(compSymbol);
-    setBoard(emptyBoard);
+    dispatch(setBoard(emptyBoard));
     // 遵循X先行的规则
     const firstPlayer = "X";
     setCurrentPlayer(firstPlayer);
@@ -183,7 +201,7 @@ export default function Home() {
             emptyCells[Math.floor(Math.random() * emptyCells.length)];
           const firstMoveBoard = emptyBoard.map((row) => [...row]); // 复制空棋盘
           firstMoveBoard[compRow][compCol] = "X";
-          setBoard(firstMoveBoard);
+          dispatch(setBoard(firstMoveBoard));
 
           // 记录电脑的第一步
           setMoves([{ player: "电脑", row: compRow, col: compCol }]);
@@ -207,6 +225,13 @@ export default function Home() {
     initializeGame(symbol);
   };
 
+  useEffect(() => {
+    if (callParentFunction == true) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      handleCellClick(x as number, y as number);
+    }
+    dispatch(setCallParentFunction(false));
+  }, [callParentFunction]);
   return (
     <>
       {/**
