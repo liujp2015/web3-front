@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="flex items-center justify-center flex-col ">
-      <h1 className="text-4xl mt-28 p-5 rounded-lg text-black bg-white">
+      <h1 className="text-4xl mt-28 p-5 rounded-lg text-black bg-white font-bold">
         react井字游戏
       </h1>
       <div className="flex flex-col gap-4 mt-5 text-2xl ">
