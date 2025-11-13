@@ -14,20 +14,14 @@ export default async function Home() {
   console.log(data.query_result.result.rows);
 
   const res1 = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/dune-dexTrading`,
-    {
-      next: { revalidate: 3600 }, // 每小时重新验证（ISR）
-    }
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/dune-dexTrading`
   );
 
   const data1 = await res1.json();
   console.log(data1.query_result.result.rows);
 
   const res2 = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/mok-erc20TopTen`,
-    {
-      next: { revalidate: 3600 }, // 每小时重新验证（ISR）
-    }
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/mok-erc20TopTen`
   );
 
   const data2 = await res2.json();
