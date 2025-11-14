@@ -60,6 +60,6 @@ const KChart: React.FC<KChartProps> = ({ times, kData }) => {
     };
   }, [kData, times]);
 
-  return <div ref={chartRef} style={{ width: "100%", height: "600px" }} />;
+  return <div ref={chartRef} style={{ width: "100%", height: "450px" }} />;
 };
 export default KChart;

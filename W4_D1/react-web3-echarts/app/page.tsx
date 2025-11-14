@@ -34,12 +34,18 @@ export default async function Home() {
 
   return (
     <div>
-      <TVLChart dailyData={data.query_result.result.rows}></TVLChart>
-      <DexTradingChart
-        dailyData={data1.query_result.result.rows}
-      ></DexTradingChart>
-      <UniswapTopHolderChart data={data2.uniTopHolders}></UniswapTopHolderChart>
-      <BitCoinKChart times={data3.times} kData={data3.kData}></BitCoinKChart>
+      <div className="flex">
+        <TVLChart dailyData={data.query_result.result.rows}></TVLChart>
+        <DexTradingChart
+          dailyData={data1.query_result.result.rows}
+        ></DexTradingChart>
+      </div>
+      <div className="flex">
+        <UniswapTopHolderChart
+          data={data2.uniTopHolders}
+        ></UniswapTopHolderChart>
+        <BitCoinKChart times={data3.times} kData={data3.kData}></BitCoinKChart>
+      </div>
     </div>
   );
 }

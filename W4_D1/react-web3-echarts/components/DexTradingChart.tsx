@@ -175,5 +175,5 @@ export default function DexTradingChart({
     };
   }, [dailyData]);
 
-  return <div ref={chartRef} style={{ width: "100%", height: "600px" }} />;
+  return <div ref={chartRef} style={{ width: "100%", height: "450px" }} />;
 }
