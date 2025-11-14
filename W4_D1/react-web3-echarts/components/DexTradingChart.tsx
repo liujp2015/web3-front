@@ -19,9 +19,20 @@ export default function DexTradingChart({
   useEffect(() => {
     if (!dailyData || dailyData.length === 0) return;
 
+    // ✅ 新增：过滤掉 Balancer 在 2025-11-12 的异常数据
+    const cleanedData = dailyData.filter((item) => {
+      const date = item._col1.split(" ")[0];
+      if (item.project.toLowerCase() === "balancer" && date === "2025-11-12") {
+        return false;
+      }
+      return true;
+    });
+
+    if (cleanedData.length === 0) return;
+
     // Step 1: 按日期 + 项目聚合交易量
     const aggregated: Record<string, Record<string, number>> = {};
-    dailyData.forEach((item) => {
+    cleanedData.forEach((item) => {
       const date = item._col1.split(" ")[0];
       const { project, usd_volume } = item;
       if (!aggregated[date]) aggregated[date] = {};
