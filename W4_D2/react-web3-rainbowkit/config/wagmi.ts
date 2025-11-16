@@ -38,10 +38,10 @@ const connectors = [
     projectId: "d452a1819999d5a65dd139fc813c5cda",
     showQrModal: true,
     metadata: {
-      name: "Web3test",
-      description: "web3test",
-      url: "https://web3test.com",
-      icons: ["https://avatars.githubusercontent.com/u/37784886"],
+      name: "My DApp Dev",
+      description: "Development version",
+      url: "http://localhost:3000", // ✅ 允许 localhost（仅限开发）
+      icons: ["http://localhost:3000/favicon.ico"],
     },
   }),
 ];
