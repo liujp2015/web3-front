@@ -40,7 +40,7 @@ const connectors = [
     metadata: {
       name: "My DApp Dev",
       description: "Development version",
-      url: "http://localhost:3000", // ✅ 允许 localhost（仅限开发）
+      url: "http://localhost:3000",
       icons: ["http://localhost:3000/favicon.ico"],
     },
   }),
