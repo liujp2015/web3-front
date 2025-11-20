@@ -5,8 +5,8 @@ export default function WalletCard({
   balance1,
   address,
 }: {
-  balance: number;
-  balance1: number;
+  balance: string | null;
+  balance1: string | null;
   address: string;
 }) {
   const copyAddress = () => {
@@ -21,8 +21,8 @@ export default function WalletCard({
         className="max-w-xl w-full rounded-2xl p-6 text-white font-sans shadow-lg"
         style={{ background: "linear-gradient(135deg, #6e45e2, #88d3ce)" }}
       >
-        <div className="text-3xl font-bold mb-5">{balance}</div>
-        <div className="text-3xl font-bold mb-5">{balance1}</div>
+        <div className="text-3xl font-bold mb-5">{balance} ETH</div>
+        <div className="text-3xl font-bold mb-5">{balance1} 代币</div>
 
         <div
           className="flex items-center justify-center bg-white bg-opacity-20 px-4 py-3 rounded-xl font-mono text-sm gap-2"

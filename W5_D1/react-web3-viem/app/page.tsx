@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import {
   createPublicClient,
   createWalletClient,
+  formatUnits,
   getContract,
   http,
   parseEther,
@@ -50,33 +51,34 @@ export default function Home() {
     client: publicClient,
   });
 
-  const [balance, setBalance] = useState<number | null>(null);
+  const [balance, setBalance] = useState<string | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   //代币余额
-  const [balance1, setBalance1] = useState<number | null>(null);
+  const [balance1, setBalance1] = useState<string | null>(null);
+
+  const fetchBalanceAndAddress = async () => {
+    try {
+      const bal = await publicClient.getBalance({
+        address: account.address,
+        blockTag: "latest",
+      });
+      console.log("Balance (ETH):", Number(bal) / 1e18);
+      setBalance(formatUnits(bal, 18));
+
+      const addresses = await client.getAddresses();
+      console.log(`The wallet address is ${addresses}`);
+      setAddress(addresses[0]);
+
+      const bal1 = await contract.read.balanceOf([account.address]);
+      setBalance1(formatUnits(bal1, 18));
+      console.log("Balance (ETH):", Number(bal1) / 1e18);
+    } catch (error) {
+      console.error("Failed to fetch data:", error);
+    }
+  };
 
   useEffect(() => {
-    const fetchBalanceAndAddress = async () => {
-      try {
-        const bal = await publicClient.getBalance({
-          address: account.address,
-          blockTag: "latest",
-        });
-        console.log("Balance (ETH):", Number(bal) / 1e18);
-        setBalance(Number(bal) / 1e18);
-
-        const addresses = await client.getAddresses();
-        console.log(`The wallet address is ${addresses}`);
-        setAddress(addresses[0]);
-
-        const bal1 = await contract.read.balanceOf([account.address]);
-        setBalance1(Number(bal1) / 1e18);
-        console.log("Balance (ETH):", Number(bal1) / 1e18);
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
-      }
-    };
-
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     fetchBalanceAndAddress();
   }, []);
 
@@ -223,16 +225,17 @@ export default function Home() {
   // ]);
   // console.log(mintedByAddress);
 
-  const F18 = (number: number | null) => {
-    return Number(number) / 1e18;
-  };
+  // const F18 = (number: number | null) => {
+  //   return Number(number) / 1e18;
+  // };
+
   return (
     <div className="flex flex-col items-center justify-center gap-4 mt-20 ">
       <div className="p-20 shadow-lg shadow-gray-400">
         <h1 className="text-2xl">钱包账户</h1>
         <WalletCard
-          balance={F18(balance)}
-          balance1={Number(balance1) / 1e18}
+          balance={balance}
+          balance1={balance1}
           address={account.address}
         />
         <div className="mt-6 flex items-center  gap-2">
@@ -292,23 +295,23 @@ export default function Home() {
             </div>
           </div>
           <h1 className="font-bold text-2xl">合约信息</h1>
-          <div className="grid grid-cols-4  p-3 rounded-xl bg-gray-100 gap-2 ">
+          <div className="grid grid-cols-2  p-3 rounded-xl bg-gray-100 gap-2 w-200">
             <div>名称:</div>
             <div>{contractInfo.name}</div>
             <div>符号</div>
-            <div>{contractInfo.name}</div>
+            <div>{contractInfo.symbol}</div>
             <div>总供应量:</div>
-            <div>{contractInfo.name}</div>
+            <div>{formatUnits(BigInt(contractInfo.totalSupply), 18)}</div>
             <div>拥有者:</div>
-            <div>{contractInfo.name}</div>
+            <div>{contractInfo.owner}</div>
             <div>剩余供应量:</div>
-            <div>{contractInfo.name}</div>
+            <div>{formatUnits(BigInt(contractInfo.remainingSupply), 18)}</div>
             <div>精度:</div>
-            <div>{contractInfo.name}</div>
+            <div>{contractInfo.decimals}</div>
             <div>最大供应量:</div>
-            <div>{contractInfo.name}</div>
+            <div>{formatUnits(BigInt(contractInfo.maxSupply), 18)}</div>
             <div>每个地址持币上限:</div>
-            <div>{contractInfo.name}</div>
+            <div>{formatUnits(BigInt(contractInfo.maxMintPerAddress), 18)}</div>
           </div>
         </div>
         <div className="mt-2">
