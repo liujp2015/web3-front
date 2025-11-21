@@ -1,5 +1,6 @@
 "use client";
 
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 import {
   useAppKit,
   useAppKitAccount,
@@ -23,11 +24,11 @@ export default function Page() {
   //     icons: ["http://localhost:3001/favicon.ico"],
   //   },
   // });
-  // const { address, isConnected, isConnecting, isDisconnected, connector } =
-  //   useAccount();
+  const { address, isConnected, isConnecting, isDisconnected, connector } =
+    useAccount();
   const { disconnect } = useDisconnect();
   const { open } = useAppKit();
-  const { address } = useAppKitAccount();
+  const { address: appKitAddress } = useAppKitAccount(); // Renamed to avoid conflict
   const { caipNetwork } = useAppKitNetwork();
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -41,7 +42,7 @@ export default function Page() {
     return <div>Loading...</div>;
   }
   return (
-    <div className="flex items-center justify-center h-screen bg-white">
+    <div className="flex flex-col items-center justify-center mt-10 gap-8">
       {/* <div className=" p-2 mx-6 bg-blue-400 rounded-md text-white">
         <button onClick={() => connect({ connector: metaMask() })}>
           Connect MetaMask
@@ -52,19 +53,66 @@ export default function Page() {
         <button onClick={() => disconnect()}>Disconnect</button>
         <div>{address}</div>
       </div> */}
-      {address ? (
-        <div>
+
+      {address || appKitAddress ? (
+        <div className="p-3 shadow-lg shadow-gray-400 flex-col gap-4 rounded-lg">
+          <h1 className="text-xl font-bold">钱包信息</h1>
+          <div>
+            地址:{address ? address : appKitAddress}
+            {address || appKitAddress ? (
+              <button
+                onClick={() => disconnect()}
+                className="bg-blue-400 p-2 rounded-lg text-white ml-3"
+              >
+                断开连接
+              </button>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
+
+      {appKitAddress ? (
+        <div className="p-3 shadow-lg shadow-gray-400 flex-col gap-8 rounded-lg justify-center items-center">
+          <h1 className="text-xl font-bold text-center">appkit</h1>
           <p>
-            Connected: {address.slice(0, 6)}...{address.slice(-4)}
+            地址: {appKitAddress.slice(0, 6)}...{appKitAddress.slice(-4)}
           </p>
-          <p>Network: {caipNetwork?.name}</p>
-          <button onClick={() => open({ view: "Account" })}>
-            Open Account Modal
-          </button>
+          <p>网络: {caipNetwork?.name}</p>
+          <div className="flex justify-center items-center">
+            <button
+              onClick={() => open({ view: "Account" })}
+              className="bg-green-400 py-2 px-4 rounded-xl text-white font-bold hover:scale-103"
+            >
+              打开appkit
+            </button>
+          </div>
         </div>
       ) : (
-        <button onClick={() => open()}>Connect Wallet</button>
+        <div className="p-3 shadow-lg shadow-gray-400 flex-col gap-8 rounded-lg">
+          <h1 className="text-xl font-bold text-center">appkit</h1>
+          <div className="flex justify-center items-center">
+            <button
+              onClick={() => open()}
+              className="bg-green-400 py-2 px-4 rounded-xl text-white font-bold hover:scale-103"
+            >
+              连接钱包
+            </button>
+          </div>
+        </div>
       )}
+
+      <div className="p-3 shadow-lg shadow-gray-400 flex-col gap-8 rounded-lg">
+        <h1 className="text-xl font-bold text-center">rainbowkit</h1>
+        <div className="flex justify-center items-center">
+          <ConnectButton
+            accountStatus="avatar"
+            showBalance={{
+              smallScreen: false,
+              largeScreen: true,
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 }

@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@rainbow-me/rainbowkit": "^2.2.9",
     "@reown/appkit": "^1.8.14",
     "@tanstack/react-query": "^5.90.9",
     "next": "16.0.3",

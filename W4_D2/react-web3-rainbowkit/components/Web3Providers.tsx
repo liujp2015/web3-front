@@ -28,7 +28,7 @@ export function Web3Providers({ children }: Web3ProvidersProps) {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider
           coolMode
-          modalSize="compact"
+          // modalSize="compact"
           theme={midnightTheme()}
         >
           {children}
