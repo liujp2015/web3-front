@@ -4,7 +4,12 @@ import { useState } from "react";
 
 export default function Page() {
   const [openSlippage, setOpenSlippage] = useState(false);
+  const tokens = ["ETH", "USDT", "USDC", "DAI"];
+  tokens.map((token) => {
+    console.log(token);
+  });
 
+  const handleSwapToFromFrom = () => {};
   return (
     <div className="flex flex-col items-center justify-center h-screen ">
       <div className="p-5 rounded-xl shadow-gray-600  shadow-md">
@@ -80,8 +85,11 @@ export default function Page() {
 
             {/* <select className="bg-white h-10 p-1 rounded-md ml-3 shadow-xs shadow-gray-300 focus:outline-none font-bold absolute right-[-1rem]"> */}
             <select className="bg-white h-10 p-1 rounded-md ml-3 shadow-xs shadow-gray-300 focus:outline-none font-bold mr-[-2rem]">
-              <option>ETH</option>
-              <option>USDC</option>
+              {tokens.map((token) => (
+                <option value={token} key={token}>
+                  {token}
+                </option>
+              ))}
             </select>
           </div>
         </div>
