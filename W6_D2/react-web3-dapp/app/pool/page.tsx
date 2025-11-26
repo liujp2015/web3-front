@@ -5,7 +5,7 @@ import clsx from "clsx"; // Import clsx
 export default function Page() {
   const [activeTab, setActiveTab] = useState("add");
   return (
-    <div className="h-screen ">
+    <div className="h-screen flex items-center justify-center">
       <div className="flex flex-col items-center justify-center ">
         <div className="p-10">
           <h1 className="text-3xl font-bold">Liquidity Pool</h1>
@@ -167,6 +167,23 @@ export default function Page() {
             <li>Remove liquidity anytime by burning LP tokens</li>
             <li>Earn 0.3% fee on all swaps proportional to your share</li>
           </ul>
+        </div>
+      </div>
+
+      <div className="p-3 rounded-2xl bg-gradient-to-br from-blue-500 via-indigo-500 to-purple-500">
+        <h1 className="font-bold text-2xl text-white">Your Liquidity</h1>
+        <div className="flex rounded-2xl  mt-3 bg-white/20">
+          <div className="flex flex-col">
+            <div className="flex items-center justify-between gap-4 p-3">
+              <span className="text-white font-bold">ETH/USDT</span>
+              <div className="bg-green-500 rounded-2xl">12.5% APR</div>
+            </div>
+            <div className="text-lg ml-3">Liquidity: $1,234,567</div>
+            <div className="flex items-center justify-center gap-2 p-3">
+              <span>My Share:</span>
+              <div>0.00%</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
