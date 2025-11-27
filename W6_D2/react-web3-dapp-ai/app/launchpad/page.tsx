@@ -16,15 +16,23 @@ export default function LaunchPadPage() {
   const [selectedProject, setSelectedProject] = useState<any>(null);
   const [investAmount, setInvestAmount] = useState("");
   const [showMintForm, setShowMintForm] = useState(false);
+  const [showMintTokenAForm, setShowMintTokenAForm] = useState(false);
+  const [showMintTokenBForm, setShowMintTokenBForm] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [mintAmount, setMintAmount] = useState("");
+  const [mintTokenAAmount, setMintTokenAAmount] = useState("");
+  const [mintTokenBAmount, setMintTokenBAmount] = useState("");
   const projectsPerPage = 6;
 
   const usdcAddress = process.env.NEXT_PUBLIC_PAYMENT_TOKEN_ADDRESS as
     | `0x${string}`
     | undefined;
+  const tokenAAddress = getTokenAddress(sepolia.id, 'TKA') as `0x${string}` | undefined;
+  const tokenBAddress = getTokenAddress(sepolia.id, 'TKB') as `0x${string}` | undefined;
   const launchpadAddress = getProtocolAddress(sepolia.id, 'LAUNCHPAD') as `0x${string}` | undefined;
   const { balance: usdcBalance } = useTokenBalance(usdcAddress, address);
+  const { balance: tokenABalance } = useTokenBalance(tokenAAddress, address);
+  const { balance: tokenBBalance } = useTokenBalance(tokenBAddress, address);
 
   const {
     mint,
@@ -46,9 +54,11 @@ export default function LaunchPadPage() {
     if (isMintSuccess) {
       console.log("✅ Mint successful!");
       alert(
-        "USDC Mint successful! Please wait a few seconds for balance to update."
+        "Token Mint successful! Please wait a few seconds for balance to update."
       );
       setMintAmount("");
+      setMintTokenAAmount("");
+      setMintTokenBAmount("");
       setTimeout(() => {
         window.location.reload();
       }, 2000);
@@ -88,6 +98,42 @@ export default function LaunchPadPage() {
     console.log("Minting USDC:", { usdcAddress, mintAmount, address });
     try {
       await mint(usdcAddress, mintAmount, 18);
+    } catch (error) {
+      console.error("Mint failed:", error);
+      alert(
+        `Mint failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    }
+  };
+
+  const handleMintTokenA = async () => {
+    if (!tokenAAddress || !mintTokenAAmount) {
+      console.error("Missing params:", { tokenAAddress, mintTokenAAmount });
+      return;
+    }
+    console.log("Minting TokenA:", { tokenAAddress, mintTokenAAmount, address });
+    try {
+      await mint(tokenAAddress, mintTokenAAmount, 18);
+    } catch (error) {
+      console.error("Mint failed:", error);
+      alert(
+        `Mint failed: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`
+      );
+    }
+  };
+
+  const handleMintTokenB = async () => {
+    if (!tokenBAddress || !mintTokenBAmount) {
+      console.error("Missing params:", { tokenBAddress, mintTokenBAmount });
+      return;
+    }
+    console.log("Minting TokenB:", { tokenBAddress, mintTokenBAmount, address });
+    try {
+      await mint(tokenBAddress, mintTokenBAmount, 18);
     } catch (error) {
       console.error("Mint failed:", error);
       alert(
@@ -170,6 +216,22 @@ export default function LaunchPadPage() {
                 <span className="hidden sm:inline">Mint USDC</span>
               </button>
 
+              <button
+                onClick={() => setShowMintTokenAForm(true)}
+                className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-md hover:shadow-lg"
+              >
+                <span className="text-lg">🪙</span>
+                <span className="hidden sm:inline">Mint TKA</span>
+              </button>
+
+              <button
+                onClick={() => setShowMintTokenBForm(true)}
+                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-md hover:shadow-lg"
+              >
+                <span className="text-lg">🎯</span>
+                <span className="hidden sm:inline">Mint TKB</span>
+              </button>
+
               {isConnected && (
                 <a
                   href="/launchpad/create"
@@ -182,13 +244,33 @@ export default function LaunchPadPage() {
             </div>
 
             {/* Right: Balance Display */}
-            <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl px-4 py-2.5 border border-blue-200">
-              <span className="text-2xl">💎</span>
-              <div className="flex flex-col">
-                <span className="text-xs text-gray-600">USDC</span>
-                <span className="text-lg font-bold text-gray-900">
-                  {parseFloat(usdcBalance || "0").toFixed(2)}
-                </span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl px-4 py-2.5 border border-blue-200">
+                <span className="text-2xl">💎</span>
+                <div className="flex flex-col">
+                  <span className="text-xs text-gray-600">USDC</span>
+                  <span className="text-lg font-bold text-gray-900">
+                    {parseFloat(usdcBalance || "0").toFixed(2)}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 bg-gradient-to-r from-orange-50 to-red-50 rounded-xl px-4 py-2.5 border border-orange-200">
+                <span className="text-2xl">🪙</span>
+                <div className="flex flex-col">
+                  <span className="text-xs text-gray-600">TKA</span>
+                  <span className="text-lg font-bold text-gray-900">
+                    {parseFloat(tokenABalance || "0").toFixed(2)}
+                  </span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl px-4 py-2.5 border border-cyan-200">
+                <span className="text-2xl">🎯</span>
+                <div className="flex flex-col">
+                  <span className="text-xs text-gray-600">TKB</span>
+                  <span className="text-lg font-bold text-gray-900">
+                    {parseFloat(tokenBBalance || "0").toFixed(2)}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -526,6 +608,170 @@ export default function LaunchPadPage() {
                     className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white font-semibold py-4 rounded-xl transition-all"
                   >
                     {isMinting ? "Minting..." : "Mint USDC"}
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Free Mint TokenA Modal */}
+        {showMintTokenAForm && (
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            onClick={() => setShowMintTokenAForm(false)}
+          >
+            <div
+              className="bg-white rounded-2xl p-6 max-w-md w-full border border-gray-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  🪙 Free Mint TokenA
+                </h2>
+                <button
+                  onClick={() => setShowMintTokenAForm(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {!isConnected ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-600 mb-4">
+                    Connect your wallet to mint TokenA
+                  </p>
+                  <button
+                    disabled
+                    className="w-full bg-gray-400 text-white font-semibold py-3 rounded-xl cursor-not-allowed"
+                  >
+                    Connect Wallet
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="mb-6">
+                    <label className="text-gray-600 text-sm mb-2 block">
+                      Amount to Mint
+                    </label>
+                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-gray-500 text-sm">
+                          Current Balance:{" "}
+                          {parseFloat(tokenABalance || "0").toFixed(2)} TKA
+                        </span>
+                      </div>
+                      <input
+                        type="number"
+                        value={mintTokenAAmount}
+                        onChange={(e) => setMintTokenAAmount(e.target.value)}
+                        placeholder="0.0"
+                        className="w-full bg-transparent text-gray-900 text-2xl font-semibold focus:outline-none placeholder-gray-400"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
+                    <p className="text-orange-800 text-sm">
+                      🎁 Free TokenA for testing! Mint up to 1,000 TKA per
+                      transaction.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={handleMintTokenA}
+                    disabled={
+                      isMinting ||
+                      !mintTokenAAmount ||
+                      parseFloat(mintTokenAAmount) <= 0 ||
+                      parseFloat(mintTokenAAmount) > 1000
+                    }
+                    className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white font-semibold py-4 rounded-xl transition-all"
+                  >
+                    {isMinting ? "Minting..." : "Mint TokenA"}
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Free Mint TokenB Modal */}
+        {showMintTokenBForm && (
+          <div
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            onClick={() => setShowMintTokenBForm(false)}
+          >
+            <div
+              className="bg-white rounded-2xl p-6 max-w-md w-full border border-gray-200"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-bold text-gray-900">
+                  🎯 Free Mint TokenB
+                </h2>
+                <button
+                  onClick={() => setShowMintTokenBForm(false)}
+                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {!isConnected ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-600 mb-4">
+                    Connect your wallet to mint TokenB
+                  </p>
+                  <button
+                    disabled
+                    className="w-full bg-gray-400 text-white font-semibold py-3 rounded-xl cursor-not-allowed"
+                  >
+                    Connect Wallet
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="mb-6">
+                    <label className="text-gray-600 text-sm mb-2 block">
+                      Amount to Mint
+                    </label>
+                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+                      <div className="flex justify-between items-center mb-2">
+                        <span className="text-gray-500 text-sm">
+                          Current Balance:{" "}
+                          {parseFloat(tokenBBalance || "0").toFixed(2)} TKB
+                        </span>
+                      </div>
+                      <input
+                        type="number"
+                        value={mintTokenBAmount}
+                        onChange={(e) => setMintTokenBAmount(e.target.value)}
+                        placeholder="0.0"
+                        className="w-full bg-transparent text-gray-900 text-2xl font-semibold focus:outline-none placeholder-gray-400"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4 mb-6">
+                    <p className="text-cyan-800 text-sm">
+                      🎁 Free TokenB for testing! Mint up to 1,000 TKB per
+                      transaction.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={handleMintTokenB}
+                    disabled={
+                      isMinting ||
+                      !mintTokenBAmount ||
+                      parseFloat(mintTokenBAmount) <= 0 ||
+                      parseFloat(mintTokenBAmount) > 1000
+                    }
+                    className="w-full bg-cyan-500 hover:bg-cyan-600 disabled:bg-gray-400 text-white font-semibold py-4 rounded-xl transition-all"
+                  >
+                    {isMinting ? "Minting..." : "Mint TokenB"}
                   </button>
                 </>
               )}
