@@ -1,7 +1,16 @@
+/**
+ * LaunchPad Projects API
+ * 
+ * 获取 LaunchPad 项目数据
+ * - 优先从区块链读取真实数据
+ * - 如果合约未部署或没有项目,返回模拟数据
+ */
+
 import { NextResponse } from 'next/server'
 import { createPublicClient, http } from 'viem'
 import { sepolia } from 'viem/chains'
 
+// LaunchPad 合约 ABI (只包含需要的读取函数)
 const LAUNCHPAD_ABI = [
   {
     "inputs": [{"internalType": "uint256", "name": "_saleId", "type": "uint256"}],
@@ -49,9 +58,14 @@ const ERC20_ABI = [
   }
 ]
 
+/**
+ * 从区块链获取项目数据
+ * @returns 项目列表或 null
+ */
 async function fetchChainProjects() {
   const launchpadAddress = process.env.NEXT_PUBLIC_LAUNCHPAD_ADDRESS
 
+  // 检查合约地址是否配置
   if (!launchpadAddress || launchpadAddress === '0x0000000000000000000000000000000000000000') {
     return null
   }
