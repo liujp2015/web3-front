@@ -176,16 +176,19 @@ export default function LaunchPadPage() {
               className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 hover:border-blue-300 transition-all cursor-pointer"
               onClick={() => setSelectedProject(project)}
             >
-              <div className="flex items-start justify-between mb-4">
-                <div className="flex items-center">
-                  <div className="text-4xl mr-3">{project.logo}</div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">{project.name}</h3>
-                    <div className="text-gray-500 text-sm">${project.symbol}</div>
-                  </div>
-                </div>
+              {/* 顶部: 状态标签 */}
+              <div className="flex justify-end mb-3">
                 <div className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusBadge(project.status)}`}>
                   {project.status.toUpperCase()}
+                </div>
+              </div>
+
+              {/* 项目标题区 */}
+              <div className="flex items-center mb-4">
+                <div className="text-4xl mr-3">{project.logo}</div>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg font-bold text-gray-900 truncate">{project.name}</h3>
+                  <div className="text-gray-500 text-sm">{project.symbol}</div>
                 </div>
               </div>
 
@@ -209,19 +212,19 @@ export default function LaunchPadPage() {
               <div className="grid grid-cols-2 gap-3 mb-4">
                 <div className="bg-gray-50 rounded-lg p-3">
                   <div className="text-gray-500 text-xs mb-1">Raised</div>
-                  <div className="text-gray-900 font-semibold">${project.raised}</div>
+                  <div className="text-gray-900 font-semibold text-sm truncate">${project.raised}</div>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-3">
                   <div className="text-gray-500 text-xs mb-1">Goal</div>
-                  <div className="text-gray-900 font-semibold">${project.totalRaise}</div>
+                  <div className="text-gray-900 font-semibold text-sm truncate">${project.totalRaise}</div>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-3">
                   <div className="text-gray-500 text-xs mb-1">Token Price</div>
-                  <div className="text-gray-900 font-semibold">${project.tokenPrice}</div>
+                  <div className="text-gray-900 font-semibold text-sm truncate">${project.tokenPrice}</div>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-3">
                   <div className="text-gray-500 text-xs mb-1">Participants</div>
-                  <div className="text-gray-900 font-semibold">{project.participants}</div>
+                  <div className="text-gray-900 font-semibold text-sm truncate">{project.participants}</div>
                 </div>
               </div>
 
