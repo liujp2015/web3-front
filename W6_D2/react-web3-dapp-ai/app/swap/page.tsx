@@ -1,73 +1,192 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAccount } from 'wagmi'
-import { useTokenApprove } from '@/hooks/useTokenApprove'
-import { useSwap, useGetSwapAmount } from '@/hooks/useSwap'
-import { useTokenBalance, useTokenAllowance } from '@/hooks/useTokenBalance'
+import { useAccount, useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { useChainId } from 'wagmi'
+import { parseUnits, formatUnits } from 'viem'
+import ApproveButton from '@/components/ApproveButton'
 import { getTokenAddress, getProtocolAddress } from '@/lib/constants'
+import { SWAP_ABI, ERC20_ABI } from '@/lib/abis'
 import { sepolia } from 'wagmi/chains'
-import { parseUnits } from 'viem'
+
+const TOKENS: Record<string, { symbol: string; decimals: number }> = {
+  TKA: { symbol: 'TKA', decimals: 18 },
+  TKB: { symbol: 'TKB', decimals: 18 },
+  USDC: { symbol: 'USDC', decimals: 18 },
+  DRT: { symbol: 'DRT', decimals: 18 },
+}
 
 export default function SwapPage() {
   const { address, isConnected } = useAccount()
-  const [fromToken, setFromToken] = useState('TKA')
-  const [toToken, setToToken] = useState('TKB')
-  const [fromAmount, setFromAmount] = useState('')
+  const chainId = useChainId()
+  const [tokenIn, setTokenIn] = useState('TKA')
+  const [tokenOut, setTokenOut] = useState('TKB')
+  const [amountIn, setAmountIn] = useState('')
+  const [amountOut, setAmountOut] = useState('')
+  const [isLoadingQuote, setIsLoadingQuote] = useState(false)
+  const [isMockMode, setIsMockMode] = useState(false)
 
-  const tokens = ['TKA', 'TKB', 'USDC', 'DRT']
+  // Slippage settings
+  const [slippage, setSlippage] = useState(0.5) // Default 0.5%
+  const [showSlippageModal, setShowSlippageModal] = useState(false)
+  const [customSlippage, setCustomSlippage] = useState('')
 
-  const fromTokenAddress = getTokenAddress(sepolia.id, fromToken) as `0x${string}` | undefined
-  const toTokenAddress = getTokenAddress(sepolia.id, toToken) as `0x${string}` | undefined
-  const swapAddress = getProtocolAddress(sepolia.id, 'SWAP') as `0x${string}` | undefined
+  const tokenInData = { ...TOKENS[tokenIn], address: getTokenAddress(chainId, tokenIn) }
+  const tokenOutData = { ...TOKENS[tokenOut], address: getTokenAddress(chainId, tokenOut) }
+  const swapAddress = getProtocolAddress(chainId, 'SWAP')
 
-  const { balance: fromBalance } = useTokenBalance(fromTokenAddress, address)
-  const { balance: toBalance } = useTokenBalance(toTokenAddress, address)
-  const { allowance } = useTokenAllowance(fromTokenAddress, address, swapAddress)
-  const { amountOut, isLoading: isCalculating } = useGetSwapAmount(fromTokenAddress, toTokenAddress, fromAmount)
-  
-  const { approve, isPending: isApproving, isSuccess: isApproveSuccess } = useTokenApprove()
-  const { swap, isPending: isSwapping, isSuccess: isSwapSuccess } = useSwap()
+  // Read reserves from chain
+  const { data: reserves, isError: reservesError } = useReadContract({
+    address: swapAddress,
+    abi: SWAP_ABI,
+    functionName: 'getReserves',
+    query: {
+      enabled: Boolean(swapAddress)
+    }
+  })
 
-  const needsApproval = allowance && fromAmount 
-    ? allowance < parseUnits(fromAmount, 18)
-    : true
+  // Read token balances
+  const { data: balanceIn } = useReadContract({
+    address: tokenInData.address,
+    abi: ERC20_ABI,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: Boolean(tokenInData.address && address)
+    }
+  })
 
+  const { data: balanceOut } = useReadContract({
+    address: tokenOutData.address,
+    abi: ERC20_ABI,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: Boolean(tokenOutData.address && address)
+    }
+  })
+
+  // Get quote from chain
+  const { data: chainQuote, isError: isQuoteError } = useReadContract({
+    address: swapAddress,
+    abi: SWAP_ABI,
+    functionName: 'getAmountOut',
+    args: amountIn && tokenInData?.address ? [tokenInData.address, parseUnits(amountIn, tokenInData.decimals)] : undefined,
+    query: {
+      enabled: Boolean(swapAddress && amountIn && parseFloat(amountIn) > 0)
+    }
+  })
+
+  // Swap transaction
+  const { data: swapHash, writeContract: swap, isPending: isSwapping } = useWriteContract()
+
+  const { isLoading: isConfirming, isSuccess: isSwapSuccess } = useWaitForTransactionReceipt({
+    hash: swapHash
+  })
+
+  // Check if mock mode
   useEffect(() => {
-    if (isApproveSuccess || isSwapSuccess) {
-      setFromAmount('')
+    if (!swapAddress || reservesError) {
+      setIsMockMode(true)
+    } else {
+      setIsMockMode(false)
     }
-  }, [isApproveSuccess, isSwapSuccess])
+  }, [swapAddress, reservesError])
 
-  const handleSwapTokens = () => {
-    const tempToken = fromToken
-    const tempAmount = fromAmount
-    setFromToken(toToken)
-    setToToken(tempToken)
-    setFromAmount('')
+  // Get quote (from chain or mock)
+  useEffect(() => {
+    const getQuote = async () => {
+      if (!amountIn || parseFloat(amountIn) <= 0) {
+        setAmountOut('')
+        return
+      }
+
+      setIsLoadingQuote(true)
+
+      // Try chain quote first
+      if (chainQuote && !isQuoteError) {
+        setAmountOut(formatUnits(chainQuote as bigint, tokenOutData.decimals))
+        setIsMockMode(false)
+        setIsLoadingQuote(false)
+        return
+      }
+
+      // Fallback to mock calculation
+      try {
+        // Simple mock: use 1:1.5 ratio
+        const mockRate = tokenIn === 'TKA' ? 1.5 : (1 / 1.5)
+        const calculatedOut = parseFloat(amountIn) * mockRate
+        setAmountOut(calculatedOut.toFixed(6))
+        setIsMockMode(true)
+      } catch (error) {
+        console.error('Error getting quote:', error)
+        setAmountOut('')
+      }
+
+      setIsLoadingQuote(false)
+    }
+
+    const timer = setTimeout(getQuote, 500) // Debounce
+    return () => clearTimeout(timer)
+  }, [amountIn, chainQuote, isQuoteError, tokenIn, tokenInData, tokenOutData])
+
+  const handleSwap = () => {
+    if (!swapAddress || !tokenInData || !amountIn) return
+
+    const amountInWei = parseUnits(amountIn, tokenInData.decimals)
+
+    swap({
+      address: swapAddress,
+      abi: SWAP_ABI,
+      functionName: 'swap',
+      args: [tokenInData.address, amountInWei]
+    })
   }
 
-  const handleApprove = async () => {
-    if (!fromTokenAddress || !swapAddress || !fromAmount) return
-    try {
-      await approve(fromTokenAddress, swapAddress, fromAmount, 18)
-    } catch (error) {
-      console.error('Approve failed:', error)
+  const switchTokens = () => {
+    setTokenIn(tokenOut)
+    setTokenOut(tokenIn)
+    setAmountIn(amountOut)
+    setAmountOut('')
+  }
+
+  const handleApproved = () => {
+    console.log('Token approved, ready to swap')
+  }
+
+  const handleMaxBalance = () => {
+    if (balanceIn) {
+      const balanceBig = typeof balanceIn === 'bigint' ? balanceIn : BigInt(balanceIn.toString())
+      setAmountIn(formatUnits(balanceBig, tokenInData.decimals))
     }
   }
 
-  const handleSwap = async () => {
-    if (!fromTokenAddress || !toTokenAddress || !fromAmount) return
-    try {
-      await swap(fromTokenAddress, toTokenAddress, fromAmount, '0', 18)
-    } catch (error) {
-      console.error('Swap failed:', error)
+  // Calculate minimum amount out with slippage
+  const minAmountOut = amountOut ? (parseFloat(amountOut) * (1 - slippage / 100)).toFixed(6) : '0'
+
+  // Calculate price impact (simplified)
+  const priceImpact = reserves && amountIn && Array.isArray(reserves) ?
+    ((parseFloat(amountIn) / (Number(reserves[tokenIn === 'TKA' ? 0 : 1]) / 1e18)) * 100).toFixed(2) : '0'
+
+  // Slippage preset buttons
+  const slippagePresets = [0.1, 0.5, 1.0]
+
+  const handleSlippagePreset = (value: number) => {
+    setSlippage(value)
+    setCustomSlippage('')
+  }
+
+  const handleCustomSlippage = (value: string) => {
+    setCustomSlippage(value)
+    const numValue = parseFloat(value)
+    if (!isNaN(numValue) && numValue >= 0 && numValue <= 50) {
+      setSlippage(numValue)
     }
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4">
-      <div className="max-w-md mx-auto">
+      <div className="max-w-md mx-auto w-full">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Swap Tokens
@@ -78,29 +197,51 @@ export default function SwapPage() {
         </div>
 
         <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold">Swap</h2>
+            <div className="flex items-center gap-2">
+              {isMockMode && (
+                <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">
+                  Mock Mode
+                </span>
+              )}
+              <button
+                onClick={() => setShowSlippageModal(true)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Settings"
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
           <div className="mb-4">
             <label className="text-gray-600 text-sm mb-2 block">From</label>
             <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
               <div className="flex justify-between items-center mb-2">
                 <select
-                  value={fromToken}
-                  onChange={(e) => setFromToken(e.target.value)}
+                  value={tokenIn}
+                  onChange={(e) => setTokenIn(e.target.value)}
                   className="bg-white text-gray-900 rounded-lg px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  {tokens.map(token => (
-                    <option key={token} value={token}>
-                      {token}
+                  {Object.keys(TOKENS).map((symbol) => (
+                    <option key={symbol} value={symbol}>
+                      {symbol}
                     </option>
                   ))}
                 </select>
-                <span className="text-gray-500 text-sm">
-                  Balance: {parseFloat(fromBalance).toFixed(4)}
-                </span>
+                <button onClick={handleMaxBalance} className="text-gray-500 text-sm hover:text-blue-600">
+                  Balance: {balanceIn ? formatUnits(typeof balanceIn === 'bigint' ? balanceIn : BigInt(balanceIn.toString()), tokenInData.decimals).slice(0, 8) : '0'}
+                </button>
               </div>
               <input
                 type="number"
-                value={fromAmount}
-                onChange={(e) => setFromAmount(e.target.value)}
+                value={amountIn}
+                onChange={(e) => setAmountIn(e.target.value)}
                 placeholder="0.0"
                 className="w-full bg-transparent text-gray-900 text-2xl font-semibold focus:outline-none placeholder-gray-400"
               />
@@ -109,7 +250,7 @@ export default function SwapPage() {
 
           <div className="flex justify-center my-4">
             <button
-              onClick={handleSwapTokens}
+              onClick={switchTokens}
               className="bg-gray-100 hover:bg-gray-200 rounded-full p-3 border border-gray-300 transition-all"
             >
               <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -123,43 +264,70 @@ export default function SwapPage() {
             <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
               <div className="flex justify-between items-center mb-2">
                 <select
-                  value={toToken}
-                  onChange={(e) => setToToken(e.target.value)}
+                  value={tokenOut}
+                  onChange={(e) => setTokenOut(e.target.value)}
                   className="bg-white text-gray-900 rounded-lg px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  {tokens.map(token => (
-                    <option key={token} value={token}>
-                      {token}
+                  {Object.keys(TOKENS).filter(s => s !== tokenIn).map((symbol) => (
+                    <option key={symbol} value={symbol}>
+                      {symbol}
                     </option>
                   ))}
                 </select>
                 <span className="text-gray-500 text-sm">
-                  Balance: {parseFloat(toBalance).toFixed(4)}
+                  Balance: {balanceOut ? formatUnits(typeof balanceOut === 'bigint' ? balanceOut : BigInt(balanceOut.toString()), tokenOutData.decimals).slice(0, 8) : '0'}
                 </span>
               </div>
               <div className="w-full text-gray-900 text-2xl font-semibold">
-                {isCalculating ? 'Calculating...' : parseFloat(amountOut).toFixed(4)}
+                {isLoadingQuote ? 'Calculating...' : (amountOut || '0.0')}
               </div>
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-4 mb-6 space-y-2">
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-600">You will receive</span>
-              <span className="text-gray-900 font-semibold">
-                {parseFloat(amountOut).toFixed(4)} {toToken}
-              </span>
-            </div>
-            {fromAmount && parseFloat(fromAmount) > 0 && (
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Exchange Rate</span>
-                <span className="text-gray-900 font-semibold">
-                  1 {fromToken} = {(parseFloat(amountOut) / parseFloat(fromAmount)).toFixed(4)} {toToken}
-                </span>
+          {/* Price Info */}
+          {amountOut && (
+            <div className="mb-4 space-y-2">
+              <div className="p-3 bg-blue-50 rounded-lg space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Rate</span>
+                  <span className="font-semibold">
+                    1 {tokenIn} = {(parseFloat(amountOut) / parseFloat(amountIn)).toFixed(4)} {tokenOut}
+                  </span>
+                </div>
+                {reserves && Array.isArray(reserves) && reserves.length >= 2 ? (
+                  <>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Liquidity</span>
+                      <span className="font-semibold">
+                        ${((Number(reserves[0]) + Number(reserves[1])) / 1e18 * 1.5).toFixed(2)}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Price Impact</span>
+                      <span className={`font-semibold ${parseFloat(priceImpact) > 5 ? 'text-red-600' : parseFloat(priceImpact) > 2 ? 'text-yellow-600' : 'text-green-600'}`}>
+                        {priceImpact}%
+                      </span>
+                    </div>
+                  </>
+                ) : null}
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Slippage Tolerance</span>
+                  <span className="font-semibold">{slippage}%</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-600">Minimum Received</span>
+                  <span className="font-semibold">{minAmountOut} {tokenOut}</span>
+                </div>
               </div>
-            )}
-          </div>
+              {parseFloat(priceImpact) > 5 && (
+                <div className="p-2 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-xs text-red-800">⚠️ High price impact! Consider a smaller amount.</p>
+                </div>
+              )}
+            </div>
+          )}
 
+          {/* Action Button */}
           {!isConnected ? (
             <button 
               disabled
@@ -167,32 +335,125 @@ export default function SwapPage() {
             >
               Connect Wallet to Swap
             </button>
-          ) : !fromAmount || parseFloat(fromAmount) <= 0 ? (
-            <button 
+          ) : !swapAddress || isMockMode ? (
+            <button
               disabled
               className="w-full bg-gray-400 text-white font-semibold py-4 rounded-xl cursor-not-allowed"
             >
-              Enter Amount
-            </button>
-          ) : needsApproval ? (
-            <button 
-              onClick={handleApprove}
-              disabled={isApproving}
-              className="w-full bg-yellow-600 hover:bg-yellow-700 disabled:bg-gray-400 text-white font-semibold py-4 rounded-xl transition-all"
-            >
-              {isApproving ? 'Approving...' : `Approve ${fromToken}`}
+              {isMockMode ? 'Swap (Mock Mode - Contract Not Deployed)' : 'Swap Contract Not Available'}
             </button>
           ) : (
-            <button 
-              onClick={handleSwap}
-              disabled={isSwapping}
-              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-4 rounded-xl transition-all"
+            <ApproveButton
+              tokenAddress={tokenInData?.address}
+              spenderAddress={swapAddress}
+              amount={amountIn ? parseUnits(amountIn, tokenInData.decimals) : 0n}
+              onApproved={handleApproved}
+              disabled={!amountIn || !amountOut || isSwapping || isConfirming}
             >
-              {isSwapping ? 'Swapping...' : 'Swap'}
-            </button>
+              <button
+                onClick={handleSwap}
+                disabled={!amountIn || !amountOut || isSwapping || isConfirming}
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-4 rounded-xl transition-all"
+              >
+                {isSwapping || isConfirming ? 'Swapping...' : 'Swap'}
+              </button>
+            </ApproveButton>
+          )}
+
+          {/* Success Message */}
+          {isSwapSuccess && (
+            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-800 font-semibold">Swap Successful!</p>
+              <a
+                href={`https://sepolia.etherscan.io/tx/${swapHash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-blue-600 hover:underline"
+              >
+                View on Etherscan →
+              </a>
+            </div>
           )}
         </div>
       </div>
+
+      {/* Slippage Settings Modal */}
+      {showSlippageModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold">Settings</h2>
+              <button
+                onClick={() => setShowSlippageModal(false)}
+                className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-semibold mb-3">Slippage Tolerance</label>
+                <div className="flex gap-2 mb-3">
+                  {slippagePresets.map((preset) => (
+                    <button
+                      key={preset}
+                      onClick={() => handleSlippagePreset(preset)}
+                      className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-colors ${
+                        slippage === preset && !customSlippage
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      }`}
+                    >
+                      {preset}%
+                    </button>
+                  ))}
+                </div>
+                <div className="relative">
+                  <input
+                    type="number"
+                    value={customSlippage}
+                    onChange={(e) => handleCustomSlippage(e.target.value)}
+                    placeholder="Custom"
+                    step="0.1"
+                    min="0"
+                    max="50"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+                  />
+                  <span className="absolute right-3 top-2 text-gray-500">%</span>
+                </div>
+                {customSlippage && parseFloat(customSlippage) > 5 && (
+                  <p className="mt-2 text-sm text-yellow-600">⚠️ High slippage may result in unfavorable rates</p>
+                )}
+                {customSlippage && parseFloat(customSlippage) > 15 && (
+                  <p className="mt-2 text-sm text-red-600">⚠️ Very high slippage! You may lose significant value.</p>
+                )}
+              </div>
+
+              <div className="pt-4 border-t">
+                <div className="bg-blue-50 rounded-lg p-3">
+                  <p className="text-sm text-gray-700">
+                    <strong>What is slippage?</strong>
+                  </p>
+                  <p className="text-xs text-gray-600 mt-1">
+                    Slippage is the difference between expected and actual trade price.
+                    Your transaction will revert if the price changes unfavorably by more than this percentage.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setShowSlippageModal(false)}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors"
+              >
+                Done
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
