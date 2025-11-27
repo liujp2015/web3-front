@@ -298,8 +298,8 @@ export default function LaunchPadPage() {
                 <div className="flex items-center">
                   <div className="text-5xl mr-4">{selectedProject.logo}</div>
                   <div>
-                    <h2 className="text-3xl font-bold text-gray-900">{selectedProject.name}</h2>
-                    <div className="text-gray-500">${selectedProject.symbol}</div>
+                    <h2 className="text-3xl font-bold text-gray-900">{selectedProject.symbol}</h2>
+                    <div className="text-gray-500 text-sm">{selectedProject.name}</div>
                   </div>
                 </div>
                 <button
