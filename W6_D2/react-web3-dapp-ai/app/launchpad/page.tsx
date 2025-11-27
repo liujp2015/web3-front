@@ -13,202 +13,68 @@ export default function LaunchPadPage() {
   const { address, isConnected } = useAccount()
   const [selectedProject, setSelectedProject] = useState<any>(null)
   const [investAmount, setInvestAmount] = useState('')
-  const [showCreateForm, setShowCreateForm] = useState(false)
   const [showMintForm, setShowMintForm] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [mintAmount, setMintAmount] = useState('')
   const projectsPerPage = 6
-  
-  // Create Project Form State
-  const [projectForm, setProjectForm] = useState({
-    name: '',
-    symbol: '',
-    targetAmount: '',
-    pricePerToken: '',
-    duration: '30',
-    description: ''
-  })
 
-  const usdcAddress = getTokenAddress(sepolia.id, 'USDC') as `0x${string}` | undefined
+  const usdcAddress = process.env.NEXT_PUBLIC_PAYMENT_TOKEN_ADDRESS as `0x${string}` | undefined
   const { balance: usdcBalance } = useTokenBalance(usdcAddress, address)
   
   const { mint, isPending: isMinting, isSuccess: isMintSuccess } = useTokenMint()
-  const { createProject, investInProject, isPending: isProjectPending, isSuccess: isProjectSuccess } = useLaunchPad()
+  const { investInProject, isPending: isProjectPending, isSuccess: isProjectSuccess } = useLaunchPad()
   const { approve, isPending: isApproving, isSuccess: isApproveSuccess } = useTokenApprove()
   
   useEffect(() => {
     if (isMintSuccess) {
+      console.log('✅ Mint successful!')
+      alert('USDC Mint successful! Please wait a few seconds for balance to update.')
       setMintAmount('')
-      setShowMintForm(false)
-    }
-    if (isProjectSuccess) {
-      setProjectForm({ name: '', symbol: '', targetAmount: '', pricePerToken: '', duration: '30', description: '' })
-      setShowCreateForm(false)
+      setTimeout(() => {
+        window.location.reload()
+      }, 2000)
     }
   }, [isMintSuccess, isProjectSuccess])
 
-  const mockProjects = [
-    {
-      id: 1,
-      name: 'DeFi Protocol X',
-      symbol: 'DPX',
-      logo: '🚀',
-      description: 'Next-generation decentralized lending protocol with AI-powered risk assessment',
-      totalRaise: '500,000',
-      raised: '350,000',
-      participants: 1234,
-      startTime: '2024-02-15',
-      endTime: '2024-02-28',
-      tokenPrice: '0.05',
-      status: 'active',
-      progress: 70
-    },
-    {
-      id: 2,
-      name: 'GameFi Arena',
-      symbol: 'GFA',
-      logo: '🎮',
-      description: 'Play-to-earn metaverse gaming platform with NFT integration',
-      totalRaise: '1,000,000',
-      raised: '1,000,000',
-      participants: 3456,
-      startTime: '2024-01-20',
-      endTime: '2024-02-05',
-      tokenPrice: '0.10',
-      status: 'completed',
-      progress: 100
-    },
-    {
-      id: 3,
-      name: 'Green Energy DAO',
-      symbol: 'GED',
-      logo: '🌱',
-      description: 'Decentralized renewable energy financing and carbon credit marketplace',
-      totalRaise: '750,000',
-      raised: '125,000',
-      participants: 567,
-      startTime: '2024-03-01',
-      endTime: '2024-03-15',
-      tokenPrice: '0.08',
-      status: 'upcoming',
-      progress: 0
-    },
-    {
-      id: 4,
-      name: 'AI Trading Bot',
-      symbol: 'ATB',
-      logo: '🤖',
-      description: 'Autonomous trading bot powered by machine learning algorithms',
-      totalRaise: '300,000',
-      raised: '180,000',
-      participants: 890,
-      startTime: '2024-02-20',
-      endTime: '2024-03-05',
-      tokenPrice: '0.03',
-      status: 'active',
-      progress: 60
-    },
-    {
-      id: 5,
-      name: 'NFT Marketplace',
-      symbol: 'NFTM',
-      logo: '🎨',
-      description: 'Decentralized marketplace for digital art and collectibles',
-      totalRaise: '800,000',
-      raised: '600,000',
-      participants: 2100,
-      startTime: '2024-02-10',
-      endTime: '2024-02-25',
-      tokenPrice: '0.12',
-      status: 'active',
-      progress: 75
-    },
-    {
-      id: 6,
-      name: 'Cross-Chain Bridge',
-      symbol: 'CCB',
-      logo: '🌉',
-      description: 'Secure and fast cross-chain asset transfer protocol',
-      totalRaise: '1,200,000',
-      raised: '0',
-      participants: 0,
-      startTime: '2024-03-10',
-      endTime: '2024-03-25',
-      tokenPrice: '0.15',
-      status: 'upcoming',
-      progress: 0
-    },
-    {
-      id: 7,
-      name: 'DAO Governance',
-      symbol: 'DAO',
-      logo: '🏛️',
-      description: 'Decentralized governance platform for community-driven decision making',
-      totalRaise: '600,000',
-      raised: '420,000',
-      participants: 1567,
-      startTime: '2024-01-25',
-      endTime: '2024-02-10',
-      tokenPrice: '0.07',
-      status: 'active',
-      progress: 70
-    },
-    {
-      id: 8,
-      name: 'Metaverse Land',
-      symbol: 'LAND',
-      logo: '🏞️',
-      description: 'Virtual real estate platform in the decentralized metaverse',
-      totalRaise: '2,000,000',
-      raised: '1,500,000',
-      participants: 4500,
-      startTime: '2024-01-15',
-      endTime: '2024-01-30',
-      tokenPrice: '0.20',
-      status: 'completed',
-      progress: 100
-    },
-    {
-      id: 9,
-      name: 'Privacy Coin',
-      symbol: 'PRIV',
-      logo: '🔐',
-      description: 'Next-generation privacy-focused cryptocurrency with advanced encryption',
-      totalRaise: '900,000',
-      raised: '270,000',
-      participants: 780,
-      startTime: '2024-03-05',
-      endTime: '2024-03-20',
-      tokenPrice: '0.09',
-      status: 'upcoming',
-      progress: 0
-    }
-  ]
+  const [projects, setProjects] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [isMockMode, setIsMockMode] = useState(false)
+
+  useEffect(() => {
+    setIsLoading(true)
+    setError(null)
+
+    fetch('/api/launchpad/projects')
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch projects')
+        return res.json()
+      })
+      .then(data => {
+        setProjects(data)
+        setIsLoading(false)
+      })
+      .catch(err => {
+        console.error('Error fetching projects:', err)
+        setError(err.message)
+        setIsLoading(false)
+      })
+  }, [])
 
   const handleMintUSDC = async () => {
-    if (!usdcAddress || !mintAmount) return
+    if (!usdcAddress || !mintAmount) {
+      console.error('Missing params:', { usdcAddress, mintAmount })
+      return
+    }
+    console.log('Minting USDC:', { usdcAddress, mintAmount, address })
     try {
       await mint(usdcAddress, mintAmount, 18)
     } catch (error) {
       console.error('Mint failed:', error)
+      alert(`Mint failed: ${error instanceof Error ? error.message : 'Unknown error'}`)
     }
   }
 
-  const handleCreateProject = async () => {
-    if (!projectForm.name || !projectForm.symbol || !projectForm.targetAmount || !projectForm.pricePerToken) return
-    try {
-      await createProject(
-        projectForm.name,
-        projectForm.symbol,
-        projectForm.targetAmount,
-        projectForm.pricePerToken,
-        parseInt(projectForm.duration),
-        projectForm.description
-      )
-    } catch (error) {
-      console.error('Create project failed:', error)
-    }
-  }
 
   const handleInvest = async () => {
     if (!selectedProject || !investAmount) return
@@ -219,10 +85,32 @@ export default function LaunchPadPage() {
     }
   }
 
-  // Pagination Logic
+  const mockProjects = projects?.projects || []
+
   const totalPages = Math.ceil(mockProjects.length / projectsPerPage)
   const startIndex = (currentPage - 1) * projectsPerPage
   const currentProjects = mockProjects.slice(startIndex, startIndex + projectsPerPage)
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12 px-4">
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading projects...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 py-12 px-4">
+        <div className="max-w-7xl mx-auto text-center">
+          <p className="text-red-600">Error: {error}</p>
+        </div>
+      </div>
+    )
+  }
 
   const getStatusBadge = (status: string) => {
     const badges: Record<string, string> = {
@@ -245,27 +133,38 @@ export default function LaunchPadPage() {
           </p>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex flex-wrap gap-4 justify-center mb-8">
-          <button 
-            onClick={() => setShowMintForm(true)}
-            className="bg-green-500 hover:bg-green-600 text-white font-semibold px-6 py-3 rounded-xl transition-all flex items-center gap-2"
-          >
-            💰 Free Mint USDC
-          </button>
-          
-          {isConnected && (
-            <button 
-              onClick={() => setShowCreateForm(true)}
-              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-xl transition-all flex items-center gap-2"
-            >
-              ➕ Create Project
-            </button>
-          )}
-          
-          <div className="bg-white rounded-xl px-4 py-3 border border-gray-200 flex items-center gap-2">
-            <span className="text-gray-600 text-sm">USDC Balance:</span>
-            <span className="text-gray-900 font-semibold">{parseFloat(usdcBalance || '0').toFixed(2)}</span>
+        {/* Action Bar */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 mb-8 border border-gray-200">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            {/* Left: Action Buttons */}
+            <div className="flex flex-wrap gap-3">
+              <button 
+                onClick={() => setShowMintForm(true)}
+                className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-md hover:shadow-lg"
+              >
+                <span className="text-lg">💰</span>
+                <span className="hidden sm:inline">Mint USDC</span>
+              </button>
+              
+              {isConnected && (
+                <a 
+                  href="/launchpad/create"
+                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-md hover:shadow-lg"
+                >
+                  <span className="text-lg">🚀</span>
+                  <span className="hidden sm:inline">Create</span>
+                </a>
+              )}
+            </div>
+            
+            {/* Right: Balance Display */}
+            <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl px-4 py-2.5 border border-blue-200">
+              <span className="text-2xl">💎</span>
+              <div className="flex flex-col">
+                <span className="text-xs text-gray-600">USDC</span>
+                <span className="text-lg font-bold text-gray-900">{parseFloat(usdcBalance || '0').toFixed(2)}</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -533,116 +432,6 @@ export default function LaunchPadPage() {
           </div>
         )}
 
-        {/* Create Project Modal */}
-        {showCreateForm && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-               onClick={() => setShowCreateForm(false)}>
-            <div className="bg-white rounded-2xl p-6 max-w-2xl w-full border border-gray-200 max-h-[90vh] overflow-y-auto"
-                 onClick={(e) => e.stopPropagation()}>
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">🚀 Create New Project</h2>
-                <button
-                  onClick={() => setShowCreateForm(false)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl"
-                >
-                  ✕
-                </button>
-              </div>
-
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-gray-600 text-sm mb-2 block">Project Name</label>
-                    <input
-                      type="text"
-                      value={projectForm.name}
-                      onChange={(e) => setProjectForm({...projectForm, name: e.target.value})}
-                      placeholder="My Amazing Project"
-                      className="w-full bg-gray-50 rounded-lg px-4 py-3 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-gray-600 text-sm mb-2 block">Token Symbol</label>
-                    <input
-                      type="text"
-                      value={projectForm.symbol}
-                      onChange={(e) => setProjectForm({...projectForm, symbol: e.target.value.toUpperCase()})}
-                      placeholder="MAP"
-                      className="w-full bg-gray-50 rounded-lg px-4 py-3 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-gray-600 text-sm mb-2 block">Target Amount (USDC)</label>
-                    <input
-                      type="number"
-                      value={projectForm.targetAmount}
-                      onChange={(e) => setProjectForm({...projectForm, targetAmount: e.target.value})}
-                      placeholder="100000"
-                      className="w-full bg-gray-50 rounded-lg px-4 py-3 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-gray-600 text-sm mb-2 block">Price per Token (USDC)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      value={projectForm.pricePerToken}
-                      onChange={(e) => setProjectForm({...projectForm, pricePerToken: e.target.value})}
-                      placeholder="0.10"
-                      className="w-full bg-gray-50 rounded-lg px-4 py-3 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-gray-600 text-sm mb-2 block">Sale Duration (days)</label>
-                  <select
-                    value={projectForm.duration}
-                    onChange={(e) => setProjectForm({...projectForm, duration: e.target.value})}
-                    className="w-full bg-gray-50 rounded-lg px-4 py-3 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="7">7 days</option>
-                    <option value="14">14 days</option>
-                    <option value="30">30 days</option>
-                    <option value="60">60 days</option>
-                    <option value="90">90 days</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label className="text-gray-600 text-sm mb-2 block">Project Description</label>
-                  <textarea
-                    value={projectForm.description}
-                    onChange={(e) => setProjectForm({...projectForm, description: e.target.value})}
-                    placeholder="Describe your project, its goals, and what makes it unique..."
-                    rows={4}
-                    className="w-full bg-gray-50 rounded-lg px-4 py-3 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-                  />
-                </div>
-
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="text-blue-900 font-semibold mb-2">Project Summary</h4>
-                  <div className="text-blue-800 text-sm space-y-1">
-                    <div>Total Tokens: {projectForm.targetAmount && projectForm.pricePerToken ? (parseFloat(projectForm.targetAmount) / parseFloat(projectForm.pricePerToken || '1')).toLocaleString() : '0'}</div>
-                    <div>Duration: {projectForm.duration} days</div>
-                    <div>Market Cap: ${projectForm.targetAmount || '0'} USDC</div>
-                  </div>
-                </div>
-
-                <button 
-                  onClick={handleCreateProject}
-                  disabled={isProjectPending || !projectForm.name || !projectForm.symbol || !projectForm.targetAmount || !projectForm.pricePerToken}
-                  className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 text-white font-semibold py-4 rounded-xl transition-all"
-                >
-                  {isProjectPending ? 'Creating...' : 'Create Project'}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )
