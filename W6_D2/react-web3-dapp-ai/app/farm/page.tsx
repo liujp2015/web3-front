@@ -20,7 +20,7 @@ function FarmPoolCard({ pool, farmAddress, userAddress, isMockMode, chainId }) {
     functionName: 'userInfo',
     args: userAddress && pool.id !== undefined ? [BigInt(pool.id), userAddress] : undefined,
     query: {
-      enabled: Boolean(farmAddress && userAddress && pool.id !== undefined && !isMockMode)
+      enabled: Boolean(farmAddress && userAddress && pool.id !== undefined && farmAddress !== '0x0000000000000000000000000000000000000000')
     }
   })
 
@@ -31,7 +31,7 @@ function FarmPoolCard({ pool, farmAddress, userAddress, isMockMode, chainId }) {
     functionName: 'pendingReward',
     args: userAddress && pool.id !== undefined ? [BigInt(pool.id), userAddress] : undefined,
     query: {
-      enabled: Boolean(farmAddress && userAddress && pool.id !== undefined && !isMockMode)
+      enabled: Boolean(farmAddress && userAddress && pool.id !== undefined && farmAddress !== '0x0000000000000000000000000000000000000000')
     }
   })
 
@@ -42,7 +42,7 @@ function FarmPoolCard({ pool, farmAddress, userAddress, isMockMode, chainId }) {
     functionName: 'balanceOf',
     args: userAddress ? [userAddress] : undefined,
     query: {
-      enabled: Boolean(pool.lpTokenAddress && userAddress && !isMockMode)
+      enabled: Boolean(pool.lpTokenAddress && userAddress && pool.lpTokenAddress !== '0x0000000000000000000000000000000000000000')
     }
   })
 
@@ -65,8 +65,8 @@ function FarmPoolCard({ pool, farmAddress, userAddress, isMockMode, chainId }) {
   })
 
   const userStaked = userInfo ? formatUnits(userInfo[0], 18).slice(0, 8) : '0'
-  const userPending = pendingReward ? formatUnits(pendingReward, 18).slice(0, 8) : (isMockMode ? '0.456' : '0')
-  const userLpBalance = lpBalance ? formatUnits(lpBalance, 18).slice(0, 8) : (isMockMode ? '10.25' : '0')
+  const userPending = pendingReward ? formatUnits(pendingReward, 18).slice(0, 8) : '0'
+  const userLpBalance = lpBalance ? formatUnits(lpBalance, 18).slice(0, 8) : '0'
 
   const handleDeposit = () => {
     if (!farmAddress || !amount || pool.id === undefined) return

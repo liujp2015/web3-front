@@ -30,7 +30,7 @@ function generateMockFarms() {
         id: 0,
         name: 'TKA-TKB LP Farm',
         lpToken: 'TKA-TKB LP',
-        lpTokenAddress: process.env.NEXT_PUBLIC_STAKE_POOL_ADDRESS || '0x0000000000000000000000000000000000000000',
+        lpTokenAddress: process.env.NEXT_PUBLIC_SWAP_ADDRESS || '0x0000000000000000000000000000000000000000',
         apy: 45.6,
         tvl: '2500000', // $2.5M
         active: true
