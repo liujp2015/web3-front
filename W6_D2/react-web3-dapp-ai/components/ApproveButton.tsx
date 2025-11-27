@@ -8,6 +8,7 @@ interface ApproveButtonProps {
   tokenAddress: `0x${string}` | undefined
   spenderAddress: `0x${string}` | undefined
   amount: bigint
+  tokenSymbol?: string
   onApproved?: () => void
   children: ReactNode
   disabled?: boolean
@@ -17,6 +18,7 @@ export default function ApproveButton({
   tokenAddress,
   spenderAddress,
   amount,
+  tokenSymbol = 'Token',
   onApproved,
   children,
   disabled = false
@@ -91,7 +93,7 @@ export default function ApproveButton({
       disabled={disabled || isApproving || isConfirming}
       className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
     >
-      {isApproving || isConfirming ? 'Approving...' : 'Approve USDC'}
+      {isApproving || isConfirming ? 'Approving...' : `Approve ${tokenSymbol}`}
     </button>
   )
 }

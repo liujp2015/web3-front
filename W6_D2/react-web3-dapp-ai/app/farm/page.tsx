@@ -255,6 +255,7 @@ function FarmPoolCard({ pool, farmAddress, userAddress, isMockMode, chainId }) {
             tokenAddress={pool.lpTokenAddress}
             spenderAddress={farmAddress}
             amount={amount ? parseUnits(amount, 18) : 0n}
+            tokenSymbol="LP"
             disabled={!amount || isDepositing || isDepositConfirming}
           >
             <button

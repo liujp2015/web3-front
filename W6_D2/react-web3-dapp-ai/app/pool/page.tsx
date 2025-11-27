@@ -48,7 +48,7 @@ export default function PoolPage() {
   })
 
   // Read user token balances
-  const { data: balanceTKA } = useReadContract({
+  const { data: balanceTKA, refetch: refetchTKA } = useReadContract({
     address: tokenAAddress,
     abi: ERC20_ABI,
     functionName: 'balanceOf',
@@ -58,7 +58,7 @@ export default function PoolPage() {
     }
   })
 
-  const { data: balanceTKB } = useReadContract({
+  const { data: balanceTKB, refetch: refetchTKB } = useReadContract({
     address: tokenBAddress,
     abi: ERC20_ABI,
     functionName: 'balanceOf',
@@ -89,6 +89,27 @@ export default function PoolPage() {
       .then(data => setPoolData(data))
       .catch(console.error)
   }, [])
+
+  // Refresh balances after successful transactions
+  useEffect(() => {
+    if (isRemoveSuccess) {
+      // Refresh token balances after successful liquidity removal
+      setTimeout(() => {
+        refetchTKA()
+        refetchTKB()
+      }, 1000) // Wait 1 second for block confirmation
+    }
+  }, [isRemoveSuccess, refetchTKA, refetchTKB])
+
+  useEffect(() => {
+    if (isAddSuccess) {
+      // Refresh token balances after successful liquidity addition
+      setTimeout(() => {
+        refetchTKA()
+        refetchTKB()
+      }, 1000)
+    }
+  }, [isAddSuccess, refetchTKA, refetchTKB])
 
   // Check if mock mode
   useEffect(() => {
@@ -360,12 +381,14 @@ export default function PoolPage() {
                 tokenAddress={tokenAAddress}
                 spenderAddress={swapAddress}
                 amount={amountA ? parseUnits(amountA, 18) : 0n}
+                tokenSymbol="TKA"
                 disabled={!amountA || !amountB || isAdding || isAddConfirming}
               >
                 <ApproveButton
                   tokenAddress={tokenBAddress}
                   spenderAddress={swapAddress}
                   amount={amountB ? parseUnits(amountB, 18) : 0n}
+                  tokenSymbol="TKB"
                   disabled={!amountA || !amountB || isAdding || isAddConfirming}
                 >
                   <button

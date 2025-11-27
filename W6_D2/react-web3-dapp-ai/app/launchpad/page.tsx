@@ -477,6 +477,7 @@ export default function LaunchPadPage() {
                     tokenAddress={usdcAddress}
                     spenderAddress={launchpadAddress}
                     amount={investAmount ? parseUnits(investAmount, 18) : BigInt(0)}
+                    tokenSymbol="USDC"
                     disabled={
                       isProjectPending ||
                       !investAmount ||

@@ -6,6 +6,18 @@ All notable changes to react-web3-dapp-ai project will be documented in this fil
 
 ### Fixed
 
+#### 🐛 ApproveButton Token Symbol Display Issue
+- **Fixed approve button display showing incorrect token name**
+  - Issue: Farm page approve button always displayed "approve usdc" regardless of actual token
+  - Root cause: ApproveButton component used hardcoded "USDC" token name
+  - Solution: Added `tokenSymbol` prop to ApproveButton component for dynamic token display
+  - Updated all ApproveButton usages across application:
+    - Farm page: `tokenSymbol="LP"` for LP token approvals
+    - Swap page: `tokenSymbol={tokenInData?.symbol}` for dynamic token symbols  
+    - Pool page: `tokenSymbol="TKA"` and `tokenSymbol="TKB"` for respective tokens
+    - Launchpad page: `tokenSymbol="USDC"` for USDC approvals
+  - Users now see correct token names in approval buttons (e.g., "Approve LP", "Approve TKA")
+
 #### 🐛 Farm Page LP Token Balance Issue
 - **LP Token Address Configuration Fix**
   - Fixed farm page showing 0 LP balance despite having actual tokens
