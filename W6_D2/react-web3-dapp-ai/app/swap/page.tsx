@@ -46,7 +46,7 @@ export default function SwapPage() {
   })
 
   // Read token balances
-  const { data: balanceIn } = useReadContract({
+  const { data: balanceIn, refetch: refetchBalanceIn } = useReadContract({
     address: tokenInData.address,
     abi: ERC20_ABI,
     functionName: 'balanceOf',
@@ -56,7 +56,7 @@ export default function SwapPage() {
     }
   })
 
-  const { data: balanceOut } = useReadContract({
+  const { data: balanceOut, refetch: refetchBalanceOut } = useReadContract({
     address: tokenOutData.address,
     abi: ERC20_ABI,
     functionName: 'balanceOf',
@@ -148,6 +148,12 @@ export default function SwapPage() {
     setTokenOut(tokenIn)
     setAmountIn(amountOut)
     setAmountOut('')
+    
+    // Refetch balances to update the display immediately
+    setTimeout(() => {
+      refetchBalanceIn()
+      refetchBalanceOut()
+    }, 100)
   }
 
   const handleApproved = () => {
