@@ -2,10 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { useAccount, useReadContract } from 'wagmi'
-import { parseUnits, formatUnits } from 'viem'
-import { getTokenAddress } from '@/lib/constants'
+import { formatUnits } from 'viem'
 import { ERC20_ABI } from '@/lib/abis'
-import { useChainId } from 'wagmi'
 
 /**
  * Bridge Page (Cross-Chain Bridge)
@@ -27,9 +25,9 @@ const SUPPORTED_CHAINS = [
 ]
 
 const SUPPORTED_TOKENS = [
-  { symbol: 'TKA', name: 'Token A' },
-  { symbol: 'TKB', name: 'Token B' },
-  { symbol: 'DRT', name: 'Reward Token' }
+  { symbol: 'TKA', name: 'Token A', address: process.env.NEXT_PUBLIC_TOKEN_A_ADDRESS },
+  { symbol: 'TKB', name: 'Token B', address: process.env.NEXT_PUBLIC_TOKEN_B_ADDRESS },
+  { symbol: 'DRT', name: 'Reward Token', address: process.env.NEXT_PUBLIC_REWARD_TOKEN_ADDRESS }
 ]
 
 // Transfer record component
@@ -130,7 +128,6 @@ function TransferRecord({ transfer, onStatusUpdate }) {
 
 export default function BridgePage() {
   const { address, isConnected } = useAccount()
-  const chainId = useChainId()
 
   // Form state
   const [sourceChain, setSourceChain] = useState('Sepolia')
@@ -145,18 +142,18 @@ export default function BridgePage() {
   const [transfers, setTransfers] = useState([])
 
   // Read user token balance
-  const tokenAddress = getTokenAddress(chainId, selectedToken)
+  const tokenData = SUPPORTED_TOKENS.find(t => t.symbol === selectedToken)
   const { data: balance } = useReadContract({
-    address: tokenAddress,
+    address: tokenData?.address,
     abi: ERC20_ABI,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
     query: {
-      enabled: Boolean(address && tokenAddress)
+      enabled: Boolean(address && tokenData?.address)
     }
   })
 
-  const userBalance = balance ? formatUnits(balance, 18).slice(0, 8) : '0'
+  const userBalance = balance ? formatUnits(balance, 18).substring(0, 10) : '0'
 
   // Auto-fill recipient address with current address
   useEffect(() => {
