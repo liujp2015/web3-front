@@ -160,12 +160,9 @@ export default function LaunchPadPage() {
               className="bg-white/80 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/30 hover:border-purple-300/50 transition-all cursor-pointer transform hover:-translate-y-2 hover:shadow-2xl group"
               onClick={() => setSelectedProject(project)}
             >
-              {/* Project Header with Logo and Status */}
+              {/* Project Header with Status */}
               <div className="flex items-start justify-between mb-6">
                 <div className="flex items-center">
-                  <div className="text-5xl mr-4 group-hover:scale-110 transition-transform">
-                    {project.logo || '🚀'}
-                  </div>
                   <div>
                     <h3 className="text-xl font-bold text-gray-900 mb-1">
                       {project.name || project.symbol}
@@ -308,17 +305,12 @@ export default function LaunchPadPage() {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-start mb-6">
-                <div className="flex items-center">
-                  <div className="text-6xl mr-6">
-                    {selectedProject.logo || '🚀'}
-                  </div>
-                  <div>
-                    <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-2">
-                      {selectedProject.name || selectedProject.symbol}
-                    </h2>
-                    <div className="text-gray-600 text-lg font-medium">
-                      ${selectedProject.symbol}
-                    </div>
+                <div>
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+                    {selectedProject.name || selectedProject.symbol}
+                  </h2>
+                  <div className="text-gray-600 text-lg font-medium">
+                    ${selectedProject.symbol}
                   </div>
                 </div>
                 <button
