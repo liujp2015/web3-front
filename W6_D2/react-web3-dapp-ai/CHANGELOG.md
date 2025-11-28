@@ -12,11 +12,19 @@ All notable changes to react-web3-dapp-ai project will be documented in this fil
   - Moved Raised to second position (right side)
   - Improved visual hierarchy for project statistics
 
-- **Replaced Investors with Progress**
-  - Changed "Investors" stat to "Progress" (percentage)
-  - Displays actual fundraising progress instead of investor count
-  - Solves issue where investor count was always 0 (not tracked by contract)
-  - Shows meaningful metric that updates with each purchase
+- **Replaced Progress with Total Supply**
+  - Changed fourth stat from "Progress" to "Total Supply"
+  - Shows total token supply available for sale
+  - More informative metric for investors
+  - Progress already displayed in progress bar above stats
+
+- **Added User Purchase Information**
+  - Displays user's purchased token amount in investment modal
+  - Reads data from contract using getUserInfo function
+  - Shows claimed status when applicable
+  - Styled with purple gradient card for visibility
+  - Only displays when user has made a purchase
+  - Aligned with web3-dapp reference implementation
 
 ### Fixed
 

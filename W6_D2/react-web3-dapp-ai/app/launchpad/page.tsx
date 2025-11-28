@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useAccount } from "wagmi";
+import { useAccount, useReadContract } from "wagmi";
 import { useLaunchPad } from "@/hooks/useLaunchPad";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
 import { getProtocolAddress } from "@/lib/constants";
-import { parseUnits } from "viem";
+import { parseUnits, formatUnits } from "viem";
 import { sepolia } from "wagmi/chains";
 import ApproveButton from "@/components/ApproveButton";
+import { LAUNCHPAD_ABI } from "@/lib/abis";
 
 export default function LaunchPadPage() {
   const { address, isConnected } = useAccount();
@@ -271,9 +272,9 @@ export default function LaunchPadPage() {
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl p-4 lg:p-5 border border-orange-100">
-                  <div className="text-orange-600 text-xs font-semibold mb-2 uppercase tracking-wider">Progress</div>
+                  <div className="text-orange-600 text-xs font-semibold mb-2 uppercase tracking-wider">Total Supply</div>
                   <div className="text-gray-900 font-bold text-base lg:text-xl break-words">
-                    {formatProgress(project.progress || 0)}
+                    {project.totalSupply || 'N/A'}
                   </div>
                 </div>
               </div>
@@ -372,6 +373,32 @@ export default function LaunchPadPage() {
               <p className="text-gray-600 mb-4 lg:mb-6 text-base lg:text-lg leading-relaxed">
                 {selectedProject.description || 'A revolutionary blockchain project bringing innovative solutions to the decentralized ecosystem.'}
               </p>
+
+              {/* User Purchase Info */}
+              {address && selectedProject && (() => {
+                const { data: userPurchase } = useReadContract({
+                  address: launchpadAddress,
+                  abi: LAUNCHPAD_ABI,
+                  functionName: 'getUserInfo',
+                  args: [BigInt(selectedProject.id), address],
+                  query: {
+                    enabled: Boolean(launchpadAddress && address)
+                  }
+                })
+
+                const userPurchased = userPurchase && Array.isArray(userPurchase) ? formatUnits(userPurchase[0] as bigint, 18) : '0'
+                const userClaimed = userPurchase && Array.isArray(userPurchase) ? (userPurchase[1] as bigint) > 0n : false
+
+                return parseFloat(userPurchased) > 0 ? (
+                  <div className="mb-4 lg:mb-6 p-4 bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl">
+                    <div className="text-sm text-purple-600 font-semibold mb-1">Your Purchase</div>
+                    <div className="text-2xl font-bold text-purple-700">{parseFloat(userPurchased).toFixed(4)} {selectedProject.symbol}</div>
+                    {userClaimed && (
+                      <div className="text-xs text-green-600 mt-2 font-semibold">✓ Claimed</div>
+                    )}
+                  </div>
+                ) : null
+              })()}
 
               {selectedProject.status === "active" && (
                 <div className="bg-gradient-to-br from-purple-50/50 to-indigo-50/50 backdrop-blur-sm rounded-2xl p-4 lg:p-6 mb-4 lg:mb-6 border border-purple-100/50">
