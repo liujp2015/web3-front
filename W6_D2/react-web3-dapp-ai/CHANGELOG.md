@@ -2,6 +2,34 @@
 
 All notable changes to react-web3-dapp-ai project will be documented in this file.
 
+## [v1.4.1] - 2025-11-28
+
+### Fixed
+
+#### 🐛 Mobile Navigation Menu Display Issues
+- **Z-Index Layering Fix**
+  - Fixed mobile navigation menu visibility issue caused by z-index conflicts
+  - Added `relative z-50` to mobile menu container to ensure proper layering above overlay
+  - Enhanced visual separation with `shadow-lg` for better menu distinction
+
+### Enhanced
+
+#### 🎨 Mobile Navigation Glassmorphism Design
+- **Semi-Transparent Menu Background**
+  - Changed mobile menu from opaque white (`bg-white`) to semi-transparent (`bg-white/80`)
+  - Added backdrop blur effect (`backdrop-blur-md`) for modern glassmorphism appearance
+  - Updated menu border to semi-transparent (`border-gray-200/50`)
+
+- **Improved Page Visibility**
+  - Reduced overlay opacity from `bg-black/25` to `bg-black/10` for better page content visibility
+  - Enhanced text contrast (`text-gray-700`) for optimal readability on transparent background
+  - Updated hover states to semi-transparent white (`hover:bg-white/60`)
+
+- **Modern iOS/macOS Style**
+  - Implemented backdrop filter blur for contemporary design aesthetic
+  - Maintained accessibility while allowing page content to show through menu
+  - Smooth transitions between menu states with consistent visual feedback
+
 ## [v1.4.0] - 2025-11-28
 
 ### Added
