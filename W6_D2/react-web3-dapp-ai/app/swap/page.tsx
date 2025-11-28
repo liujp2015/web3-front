@@ -168,7 +168,7 @@ export default function SwapPage() {
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 overflow-visible">
+        <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold">Swap</h2>
@@ -191,18 +191,18 @@ export default function SwapPage() {
             </div>
           </div>
 
-          <div className="mb-4 relative overflow-visible">
+          <div className="mb-4">
             <label className="text-gray-600 text-sm mb-3 block font-medium">From</label>
-            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-5 border border-gray-200 hover:border-blue-300 transition-all overflow-visible relative">
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-5 border border-gray-200 hover:border-blue-300 transition-all">
               <div className="flex items-center justify-between gap-4">
                 <input
                   type="number"
                   value={amountIn}
                   onChange={(e) => setAmountIn(e.target.value)}
                   placeholder="0.0"
-                  className="flex-1 bg-transparent text-gray-900 text-3xl font-bold focus:outline-none placeholder-gray-400"
+                  className="flex-1 bg-transparent text-gray-900 text-3xl font-bold focus:outline-none placeholder-gray-400 min-w-0"
                 />
-                <div className="relative">
+                <div className="relative flex-shrink-0">
                   <select
                     value={tokenIn}
                     onChange={(e) => setTokenIn(e.target.value)}
@@ -235,18 +235,18 @@ export default function SwapPage() {
             </button>
           </div>
 
-          <div className="mb-6 relative overflow-visible">
+          <div className="mb-6">
             <label className="text-gray-600 text-sm mb-3 block font-medium">To</label>
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-200 hover:border-blue-400 transition-all overflow-visible relative">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-200 hover:border-blue-400 transition-all">
               <div className="flex items-center justify-between gap-4">
-                <div className="flex-1 text-gray-900 text-3xl font-bold">
+                <div className="flex-1 text-gray-900 text-3xl font-bold min-w-0">
                   {isLoadingQuote ? (
                     <span className="text-blue-600 animate-pulse">Calculating...</span>
                   ) : (
                     <span>{amountOut || '0.0'}</span>
                   )}
                 </div>
-                <div className="relative">
+                <div className="relative flex-shrink-0">
                   <select
                     value={tokenOut}
                     onChange={(e) => setTokenOut(e.target.value)}
