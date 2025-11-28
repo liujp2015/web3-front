@@ -45,27 +45,6 @@ export default function SwapPage() {
     }
   })
 
-  // Read token balances
-  const { data: balanceIn, refetch: refetchBalanceIn } = useReadContract({
-    address: tokenInData.address,
-    abi: ERC20_ABI,
-    functionName: 'balanceOf',
-    args: address ? [address] : undefined,
-    query: {
-      enabled: Boolean(tokenInData.address && address)
-    }
-  })
-
-  const { data: balanceOut, refetch: refetchBalanceOut } = useReadContract({
-    address: tokenOutData.address,
-    abi: ERC20_ABI,
-    functionName: 'balanceOf',
-    args: address ? [address] : undefined,
-    query: {
-      enabled: Boolean(tokenOutData.address && address)
-    }
-  })
-
   // Get quote from chain
   const { data: chainQuote, isError: isQuoteError } = useReadContract({
     address: swapAddress,
@@ -148,23 +127,10 @@ export default function SwapPage() {
     setTokenOut(tokenIn)
     setAmountIn(amountOut)
     setAmountOut('')
-    
-    // Refetch balances to update the display immediately
-    setTimeout(() => {
-      refetchBalanceIn()
-      refetchBalanceOut()
-    }, 100)
   }
 
   const handleApproved = () => {
     console.log('Token approved, ready to swap')
-  }
-
-  const handleMaxBalance = () => {
-    if (balanceIn) {
-      const balanceBig = typeof balanceIn === 'bigint' ? balanceIn : BigInt(balanceIn.toString())
-      setAmountIn(formatUnits(balanceBig, tokenInData.decimals))
-    }
   }
 
   // Calculate minimum amount out with slippage
@@ -240,9 +206,6 @@ export default function SwapPage() {
                     </option>
                   ))}
                 </select>
-                <button onClick={handleMaxBalance} className="text-gray-500 text-sm hover:text-blue-600">
-                  Balance: {balanceIn ? formatUnits(typeof balanceIn === 'bigint' ? balanceIn : BigInt(balanceIn.toString()), tokenInData.decimals).slice(0, 8) : '0'}
-                </button>
               </div>
               <input
                 type="number"
@@ -280,9 +243,6 @@ export default function SwapPage() {
                     </option>
                   ))}
                 </select>
-                <span className="text-gray-500 text-sm">
-                  Balance: {balanceOut ? formatUnits(typeof balanceOut === 'bigint' ? balanceOut : BigInt(balanceOut.toString()), tokenOutData.decimals).slice(0, 8) : '0'}
-                </span>
               </div>
               <div className="w-full text-gray-900 text-2xl font-semibold">
                 {isLoadingQuote ? 'Calculating...' : (amountOut || '0.0')}
