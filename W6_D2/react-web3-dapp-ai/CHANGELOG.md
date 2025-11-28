@@ -25,6 +25,25 @@ All notable changes to react-web3-dapp-ai project will be documented in this fil
   - Professional financial data presentation consistent with industry standards
   - Maintained readability while improving information density
 
+### Fixed
+
+#### 🐛 Project Card Display Issues
+- **Card Size Optimization**
+  - Increased card padding from `p-6 lg:p-8` to `p-8 lg:p-10` for more content space
+  - Added minimum card height (`min-h-[400px]`) for consistent sizing
+  - Changed grid layout from 3-column to 2-column (`lg:grid-cols-2`) for better space utilization
+
+- **Amount Display Fix** 
+  - Enhanced stats grid spacing from `gap-3 lg:gap-4` to `gap-4 lg:gap-6`
+  - Increased stats padding from `p-3 lg:p-4` to `p-4 lg:p-5`
+  - Upgraded text sizing from `text-sm lg:text-lg` to `text-base lg:text-xl`
+  - Added `break-words` class to prevent amount text overflow
+
+- **Visual Improvements**
+  - Increased gap spacing between cards for better visual separation
+  - Improved text readability with larger font sizes
+  - Better card proportions for professional appearance
+
 ## [v1.4.1] - 2025-11-28
 
 ### Fixed
