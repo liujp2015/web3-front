@@ -271,9 +271,9 @@ export default function LaunchPadPage() {
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl p-4 lg:p-5 border border-orange-100">
-                  <div className="text-orange-600 text-xs font-semibold mb-2 uppercase tracking-wider">Investors</div>
+                  <div className="text-orange-600 text-xs font-semibold mb-2 uppercase tracking-wider">Progress</div>
                   <div className="text-gray-900 font-bold text-base lg:text-xl break-words">
-                    {project.participants || 0}
+                    {formatProgress(project.progress || 0)}
                   </div>
                 </div>
               </div>

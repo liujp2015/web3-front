@@ -4,6 +4,20 @@ All notable changes to react-web3-dapp-ai project will be documented in this fil
 
 ## [v1.5.3] - 2025-11-28
 
+### Changed
+
+#### 🔄 LaunchPad Stats Display
+- **Swapped Goal and Raised Position**
+  - Moved Goal to first position (left side)
+  - Moved Raised to second position (right side)
+  - Improved visual hierarchy for project statistics
+
+- **Replaced Investors with Progress**
+  - Changed "Investors" stat to "Progress" (percentage)
+  - Displays actual fundraising progress instead of investor count
+  - Solves issue where investor count was always 0 (not tracked by contract)
+  - Shows meaningful metric that updates with each purchase
+
 ### Fixed
 
 #### 🐛 LaunchPad Investment Function
