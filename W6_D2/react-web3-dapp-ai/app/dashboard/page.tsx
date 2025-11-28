@@ -13,13 +13,11 @@ export default function DashboardPage() {
   const tkaAddress = getTokenAddress(sepolia.id, 'TKA') as `0x${string}` | undefined
   const tkbAddress = getTokenAddress(sepolia.id, 'TKB') as `0x${string}` | undefined
   const usdcAddress = getTokenAddress(sepolia.id, 'USDC') as `0x${string}` | undefined
-  const drtAddress = getTokenAddress(sepolia.id, 'DRT') as `0x${string}` | undefined
   const lpAddress = getProtocolAddress(sepolia.id, 'STAKE_POOL') as `0x${string}` | undefined
 
   const { balance: tkaBalance } = useTokenBalance(tkaAddress, address)
   const { balance: tkbBalance } = useTokenBalance(tkbAddress, address)
   const { balance: usdcBalance } = useTokenBalance(usdcAddress, address)
-  const { balance: drtBalance } = useTokenBalance(drtAddress, address)
   const { balance: lpBalance } = useTokenBalance(lpAddress, address)
 
   const { stakedAmount, pendingRewards } = useFarmData(address)
@@ -29,7 +27,6 @@ export default function DashboardPage() {
     { symbol: 'TKA', name: 'Token A', balance: tkaBalance, value: `$${(parseFloat(tkaBalance) * 1.2).toFixed(2)}`, change: '+3.2%', changePositive: true },
     { symbol: 'TKB', name: 'Token B', balance: tkbBalance, value: `$${(parseFloat(tkbBalance) * 0.8).toFixed(2)}`, change: '-1.1%', changePositive: false },
     { symbol: 'USDC', name: 'USD Coin', balance: usdcBalance, value: `$${parseFloat(usdcBalance).toFixed(2)}`, change: '0.0%', changePositive: true },
-    { symbol: 'DRT', name: 'DeFi Reward Token', balance: drtBalance, value: `$${(parseFloat(drtBalance) * 2.5).toFixed(2)}`, change: '+12.5%', changePositive: true },
   ]
 
   const liquidityPositions = [
