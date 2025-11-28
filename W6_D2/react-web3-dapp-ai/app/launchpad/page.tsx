@@ -2,11 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useAccount } from "wagmi";
-import { useTokenMint } from "@/hooks/useTokenMint";
-import { useLaunchPad, useLaunchPadData } from "@/hooks/useLaunchPad";
-import { useTokenApprove } from "@/hooks/useTokenApprove";
+import { useLaunchPad } from "@/hooks/useLaunchPad";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
-import { getTokenAddress, getProtocolAddress } from "@/lib/constants";
+import { getProtocolAddress } from "@/lib/constants";
 import { parseUnits } from "viem";
 import { sepolia } from "wagmi/chains";
 import ApproveButton from "@/components/ApproveButton";
@@ -15,60 +13,24 @@ export default function LaunchPadPage() {
   const { address, isConnected } = useAccount();
   const [selectedProject, setSelectedProject] = useState<any>(null);
   const [investAmount, setInvestAmount] = useState("");
-  const [showMintForm, setShowMintForm] = useState(false);
-  const [showMintTokenAForm, setShowMintTokenAForm] = useState(false);
-  const [showMintTokenBForm, setShowMintTokenBForm] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [mintAmount, setMintAmount] = useState("");
-  const [mintTokenAAmount, setMintTokenAAmount] = useState("");
-  const [mintTokenBAmount, setMintTokenBAmount] = useState("");
   const projectsPerPage = 6;
 
   const usdcAddress = process.env.NEXT_PUBLIC_PAYMENT_TOKEN_ADDRESS as
     | `0x${string}`
     | undefined;
-  const tokenAAddress = getTokenAddress(sepolia.id, 'TKA') as `0x${string}` | undefined;
-  const tokenBAddress = getTokenAddress(sepolia.id, 'TKB') as `0x${string}` | undefined;
   const launchpadAddress = getProtocolAddress(sepolia.id, 'LAUNCHPAD') as `0x${string}` | undefined;
   const { balance: usdcBalance } = useTokenBalance(usdcAddress, address);
-  const { balance: tokenABalance } = useTokenBalance(tokenAAddress, address);
-  const { balance: tokenBBalance } = useTokenBalance(tokenBAddress, address);
 
-  const {
-    mint,
-    isPending: isMinting,
-    isSuccess: isMintSuccess,
-  } = useTokenMint();
   const {
     investInProject,
     isPending: isProjectPending,
     isSuccess: isProjectSuccess,
   } = useLaunchPad();
-  const {
-    approve,
-    isPending: isApproving,
-    isSuccess: isApproveSuccess,
-  } = useTokenApprove();
-
-  useEffect(() => {
-    if (isMintSuccess) {
-      console.log("✅ Mint successful!");
-      alert(
-        "Token Mint successful! Please wait a few seconds for balance to update."
-      );
-      setMintAmount("");
-      setMintTokenAAmount("");
-      setMintTokenBAmount("");
-      setTimeout(() => {
-        window.location.reload();
-      }, 2000);
-    }
-  }, [isMintSuccess, isProjectSuccess]);
 
   const [projects, setProjects] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isMockMode, setIsMockMode] = useState(false);
 
   useEffect(() => {
     setIsLoading(true);
@@ -90,60 +52,6 @@ export default function LaunchPadPage() {
       });
   }, []);
 
-  const handleMintUSDC = async () => {
-    if (!usdcAddress || !mintAmount) {
-      console.error("Missing params:", { usdcAddress, mintAmount });
-      return;
-    }
-    console.log("Minting USDC:", { usdcAddress, mintAmount, address });
-    try {
-      await mint(usdcAddress, mintAmount, 18);
-    } catch (error) {
-      console.error("Mint failed:", error);
-      alert(
-        `Mint failed: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
-      );
-    }
-  };
-
-  const handleMintTokenA = async () => {
-    if (!tokenAAddress || !mintTokenAAmount) {
-      console.error("Missing params:", { tokenAAddress, mintTokenAAmount });
-      return;
-    }
-    console.log("Minting TokenA:", { tokenAAddress, mintTokenAAmount, address });
-    try {
-      await mint(tokenAAddress, mintTokenAAmount, 18);
-    } catch (error) {
-      console.error("Mint failed:", error);
-      alert(
-        `Mint failed: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
-      );
-    }
-  };
-
-  const handleMintTokenB = async () => {
-    if (!tokenBAddress || !mintTokenBAmount) {
-      console.error("Missing params:", { tokenBAddress, mintTokenBAmount });
-      return;
-    }
-    console.log("Minting TokenB:", { tokenBAddress, mintTokenBAmount, address });
-    try {
-      await mint(tokenBAddress, mintTokenBAmount, 18);
-    } catch (error) {
-      console.error("Mint failed:", error);
-      alert(
-        `Mint failed: ${
-          error instanceof Error ? error.message : "Unknown error"
-        }`
-      );
-    }
-  };
-
   const handleInvest = async () => {
     if (!selectedProject || !investAmount) return;
     try {
@@ -164,10 +72,10 @@ export default function LaunchPadPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12 px-4">
         <div className="max-w-7xl mx-auto text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading projects...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-500 border-t-transparent mx-auto mb-6"></div>
+          <p className="text-gray-600 text-lg">Loading amazing projects...</p>
         </div>
       </div>
     );
@@ -175,9 +83,10 @@ export default function LaunchPadPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4">
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12 px-4">
         <div className="max-w-7xl mx-auto text-center">
-          <p className="text-red-600">Error: {error}</p>
+          <div className="text-6xl mb-4">😕</div>
+          <p className="text-red-600 text-lg">Error: {error}</p>
         </div>
       </div>
     );
@@ -185,90 +94,57 @@ export default function LaunchPadPage() {
 
   const getStatusBadge = (status: string) => {
     const badges: Record<string, string> = {
-      active: "bg-green-100 text-green-600 border-green-200",
-      completed: "bg-gray-100 text-gray-600 border-gray-200",
-      upcoming: "bg-blue-100 text-blue-600 border-blue-200",
+      active: "bg-green-100 text-green-700 border-green-200",
+      completed: "bg-gray-100 text-gray-700 border-gray-200",
+      upcoming: "bg-blue-100 text-blue-700 border-blue-200",
     };
     return badges[status] || badges.upcoming;
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12 px-4">
       <div className="max-w-7xl mx-auto">
+        {/* Header */}
         <div className="text-center mb-8">
-          <div className="text-6xl mb-3">🚀</div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">LaunchPad</h1>
-          <p className="text-gray-600 text-lg">
-            Discover and invest in promising blockchain projects
+          <div className="text-6xl mb-4 animate-bounce">🚀</div>
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">LaunchPad</h1>
+          <p className="text-gray-700 text-xl max-w-2xl mx-auto leading-relaxed">
+            Discover and invest in the most promising blockchain projects
           </p>
         </div>
 
         {/* Action Bar */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg p-4 mb-8 border border-gray-200">
+        <div className="bg-white/70 backdrop-blur-lg rounded-3xl shadow-xl p-6 mb-8 border border-white/20">
           <div className="flex flex-wrap items-center justify-between gap-4">
             {/* Left: Action Buttons */}
-            <div className="flex flex-wrap gap-3">
-              <button
-                onClick={() => setShowMintForm(true)}
-                className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-md hover:shadow-lg"
+            <div className="flex flex-wrap gap-4">
+              <a
+                href="/mint"
+                className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold px-6 py-3 rounded-2xl transition-all flex items-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
-                <span className="text-lg">💰</span>
-                <span className="hidden sm:inline">Mint USDC</span>
-              </button>
-
-              <button
-                onClick={() => setShowMintTokenAForm(true)}
-                className="bg-gradient-to-r from-orange-500 to-red-600 hover:from-orange-600 hover:to-red-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-md hover:shadow-lg"
-              >
-                <span className="text-lg">🪙</span>
-                <span className="hidden sm:inline">Mint TKA</span>
-              </button>
-
-              <button
-                onClick={() => setShowMintTokenBForm(true)}
-                className="bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-md hover:shadow-lg"
-              >
-                <span className="text-lg">🎯</span>
-                <span className="hidden sm:inline">Mint TKB</span>
-              </button>
+                <span className="text-2xl">🪙</span>
+                <span className="hidden sm:inline">Mint Tokens</span>
+              </a>
 
               {isConnected && (
                 <a
                   href="/launchpad/create"
-                  className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold px-5 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-md hover:shadow-lg"
+                  className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold px-6 py-3 rounded-2xl transition-all flex items-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
-                  <span className="text-lg">🚀</span>
-                  <span className="hidden sm:inline">Create</span>
+                  <span className="text-2xl">✨</span>
+                  <span className="hidden sm:inline">Create Project</span>
                 </a>
               )}
             </div>
 
             {/* Right: Balance Display */}
             <div className="flex items-center gap-3">
-              <div className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl px-4 py-2.5 border border-blue-200">
-                <span className="text-2xl">💎</span>
+              <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-100/80 to-purple-100/80 backdrop-blur-sm rounded-2xl px-4 py-3 border border-indigo-200/50">
+                <span className="text-3xl">💎</span>
                 <div className="flex flex-col">
-                  <span className="text-xs text-gray-600">USDC</span>
-                  <span className="text-lg font-bold text-gray-900">
-                    {parseFloat(usdcBalance || "0").toFixed(2)}
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 bg-gradient-to-r from-orange-50 to-red-50 rounded-xl px-4 py-2.5 border border-orange-200">
-                <span className="text-2xl">🪙</span>
-                <div className="flex flex-col">
-                  <span className="text-xs text-gray-600">TKA</span>
-                  <span className="text-lg font-bold text-gray-900">
-                    {parseFloat(tokenABalance || "0").toFixed(2)}
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl px-4 py-2.5 border border-cyan-200">
-                <span className="text-2xl">🎯</span>
-                <div className="flex flex-col">
-                  <span className="text-xs text-gray-600">TKB</span>
-                  <span className="text-lg font-bold text-gray-900">
-                    {parseFloat(tokenBBalance || "0").toFixed(2)}
+                  <span className="text-xs text-gray-600 font-medium">BALANCE</span>
+                  <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                    ${parseFloat(usdcBalance || "0").toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -277,89 +153,101 @@ export default function LaunchPadPage() {
         </div>
 
         {/* Project Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-8">
           {currentProjects.map((project: any) => (
             <div
               key={project.id}
-              className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 hover:border-blue-300 transition-all cursor-pointer"
+              className="bg-white/80 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/30 hover:border-purple-300/50 transition-all cursor-pointer transform hover:-translate-y-2 hover:shadow-2xl group"
               onClick={() => setSelectedProject(project)}
             >
-              <div className="flex justify-between">
-                {/* 项目标题区 */}
-                <div className="flex items-center mb-4">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-lg font-bold text-gray-900 truncate">
-                      {project.symbol}
+              {/* Project Header with Logo and Status */}
+              <div className="flex items-start justify-between mb-6">
+                <div className="flex items-center">
+                  <div className="text-5xl mr-4 group-hover:scale-110 transition-transform">
+                    {project.logo || '🚀'}
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">
+                      {project.name || project.symbol}
                     </h3>
+                    <div className="text-gray-500 text-sm font-medium">
+                      ${project.symbol}
+                    </div>
                   </div>
                 </div>
-                {/* 顶部: 状态标签 */}
-                <div className="flex justify-end mb-3">
-                  <div
-                    className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusBadge(
-                      project.status
-                    )}`}
-                  >
-                    {project.status.toUpperCase()}
-                  </div>
+                <div
+                  className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider ${getStatusBadge(
+                    project.status
+                  )} shadow-lg`}
+                >
+                  {project.status}
                 </div>
               </div>
-              <div className="mb-4">
-                <div className="flex justify-between text-sm mb-2">
-                  <span className="text-gray-600">Progress</span>
-                  <span className="text-gray-900 font-semibold">
+
+              {/* Project Description */}
+              <p className="text-gray-600 text-sm mb-6 line-clamp-2 leading-relaxed">
+                {project.description || 'A promising blockchain project with innovative solutions.'}
+              </p>
+
+              {/* Progress Bar */}
+              <div className="mb-6">
+                <div className="flex justify-between text-sm mb-3">
+                  <span className="text-gray-600 font-medium">Funding Progress</span>
+                  <span className="text-gray-900 font-bold">
                     {project.progress}%
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
                   <div
-                    className="bg-blue-500 h-2 rounded-full transition-all"
+                    className="bg-gradient-to-r from-purple-500 to-indigo-600 h-3 rounded-full transition-all duration-1000 ease-out shadow-lg"
                     style={{ width: `${project.progress}%` }}
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <div className="text-gray-500 text-xs mb-1">Raised</div>
-                  <div className="text-gray-900 font-semibold text-sm truncate">
+              {/* Project Stats */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
+                  <div className="text-green-600 text-xs font-semibold mb-1 uppercase tracking-wider">Raised</div>
+                  <div className="text-gray-900 font-bold text-lg">
                     ${project.raised}
                   </div>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <div className="text-gray-500 text-xs mb-1">Goal</div>
-                  <div className="text-gray-900 font-semibold text-sm truncate">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                  <div className="text-blue-600 text-xs font-semibold mb-1 uppercase tracking-wider">Goal</div>
+                  <div className="text-gray-900 font-bold text-lg">
                     ${project.totalRaise}
                   </div>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <div className="text-gray-500 text-xs mb-1">Token Price</div>
-                  <div className="text-gray-900 font-semibold text-sm truncate">
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+                  <div className="text-purple-600 text-xs font-semibold mb-1 uppercase tracking-wider">Price</div>
+                  <div className="text-gray-900 font-bold text-lg">
                     ${project.tokenPrice}
                   </div>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-3">
-                  <div className="text-gray-500 text-xs mb-1">Participants</div>
-                  <div className="text-gray-900 font-semibold text-sm truncate">
+                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl p-4 border border-orange-100">
+                  <div className="text-orange-600 text-xs font-semibold mb-1 uppercase tracking-wider">Investors</div>
+                  <div className="text-gray-900 font-bold text-lg">
                     {project.participants}
                   </div>
                 </div>
               </div>
 
+              {/* Action Button */}
               {project.status === "active" ? (
                 <button
                   onClick={() => setSelectedProject(project)}
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 rounded-xl transition-all"
+                  className="w-full bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-bold py-4 rounded-2xl transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
                 >
-                  Invest Now
+                  🚀 Invest Now
                 </button>
               ) : project.status === "upcoming" ? (
-                <button className="w-full bg-gray-200 text-gray-500 font-semibold py-3 rounded-xl cursor-not-allowed">
-                  Coming Soon
+                <button className="w-full bg-gradient-to-r from-blue-400 to-blue-500 text-white/70 font-bold py-4 rounded-2xl cursor-not-allowed">
+                  ⏳ Coming Soon
                 </button>
               ) : (
-                <button className="w-full bg-gray-200 text-gray-500 font-semibold py-3 rounded-xl cursor-not-allowed">
-                  Sale Ended
+                <button className="w-full bg-gradient-to-r from-gray-400 to-gray-500 text-white/70 font-bold py-4 rounded-2xl cursor-not-allowed">
+                  ✅ Sale Ended
                 </button>
               )}
             </div>
@@ -371,7 +259,7 @@ export default function LaunchPadPage() {
           <button
             onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
-            className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="px-6 py-3 bg-white/80 backdrop-blur-sm border border-white/30 rounded-2xl text-gray-600 hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
           >
             Previous
           </button>
@@ -381,10 +269,10 @@ export default function LaunchPadPage() {
               <button
                 key={page}
                 onClick={() => setCurrentPage(page)}
-                className={`px-3 py-2 rounded-lg font-medium transition-all ${
+                className={`px-4 py-3 rounded-2xl font-bold transition-all shadow-lg ${
                   currentPage === page
-                    ? "bg-blue-500 text-white"
-                    : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200"
+                    ? "bg-gradient-to-r from-purple-500 to-indigo-600 text-white shadow-xl"
+                    : "bg-white/80 text-gray-600 hover:bg-white/90 border border-white/30"
                 }`}
               >
                 {page}
@@ -397,13 +285,13 @@ export default function LaunchPadPage() {
               setCurrentPage((prev) => Math.min(prev + 1, totalPages))
             }
             disabled={currentPage === totalPages}
-            className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-gray-600 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="px-6 py-3 bg-white/80 backdrop-blur-sm border border-white/30 rounded-2xl text-gray-600 hover:bg-white/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg"
           >
             Next
           </button>
         </div>
 
-        <div className="text-center text-gray-500 text-sm mb-8">
+        <div className="text-center text-gray-600 text-sm mb-8">
           Showing {startIndex + 1}-
           {Math.min(startIndex + projectsPerPage, mockProjects.length)} of{" "}
           {mockProjects.length} projects
@@ -412,42 +300,45 @@ export default function LaunchPadPage() {
         {/* Project Details Modal */}
         {selectedProject && (
           <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-black/60 backdrop-blur-lg flex items-center justify-center p-4 z-50"
             onClick={() => setSelectedProject(null)}
           >
             <div
-              className="bg-white rounded-2xl p-8 max-w-2xl w-full border border-gray-200"
+              className="bg-white/95 backdrop-blur-lg rounded-3xl p-8 max-w-2xl w-full border border-white/30 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex justify-between items-start mb-6">
                 <div className="flex items-center">
+                  <div className="text-6xl mr-6">
+                    {selectedProject.logo || '🚀'}
+                  </div>
                   <div>
-                    <h2 className="text-3xl font-bold text-gray-900">
-                      {selectedProject.symbol}
+                    <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+                      {selectedProject.name || selectedProject.symbol}
                     </h2>
-                    <div className="text-gray-500 text-sm">
-                      {selectedProject.name}
+                    <div className="text-gray-600 text-lg font-medium">
+                      ${selectedProject.symbol}
                     </div>
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl"
+                  className="text-gray-400 hover:text-gray-600 text-3xl p-2 hover:bg-gray-100 rounded-full transition-all"
                 >
                   ✕
                 </button>
               </div>
 
-              <p className="text-gray-600 mb-6">
-                {selectedProject.description}
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+                {selectedProject.description || 'A revolutionary blockchain project bringing innovative solutions to the decentralized ecosystem.'}
               </p>
 
               {selectedProject.status === "active" && (
-                <div className="bg-gray-50 rounded-xl p-6 mb-6">
-                  <label className="text-gray-600 text-sm mb-2 block">
+                <div className="bg-gradient-to-br from-purple-50/50 to-indigo-50/50 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-purple-100/50">
+                  <label className="text-gray-700 text-sm font-semibold mb-3 block">
                     Investment Amount (USDC)
                   </label>
-                  <div className="flex items-center bg-white rounded-lg px-4 py-3 mb-4 border border-gray-200">
+                  <div className="flex items-center bg-white/80 backdrop-blur-sm rounded-xl px-4 py-4 mb-4 border border-gray-200 shadow-sm">
                     <input
                       type="number"
                       value={investAmount}
@@ -455,14 +346,17 @@ export default function LaunchPadPage() {
                       placeholder="0.0"
                       className="flex-1 bg-transparent text-gray-900 text-xl font-semibold focus:outline-none placeholder-gray-400"
                     />
-                    <button className="text-blue-500 text-sm font-semibold hover:text-blue-600">
+                    <button 
+                      onClick={() => setInvestAmount(usdcBalance || '0')}
+                      className="text-purple-600 text-sm font-bold hover:text-purple-700 px-3 py-1 rounded-lg hover:bg-purple-50 transition-all"
+                    >
                       MAX
                     </button>
                   </div>
 
-                  <div className="flex justify-between text-sm text-gray-600 mb-4">
-                    <span>You will receive:</span>
-                    <span className="text-gray-900 font-semibold">
+                  <div className="flex justify-between text-sm text-gray-600 mb-6 p-3 bg-white/50 rounded-lg">
+                    <span className="font-medium">You will receive:</span>
+                    <span className="text-gray-900 font-bold">
                       {investAmount
                         ? (
                             parseFloat(investAmount) /
@@ -491,291 +385,47 @@ export default function LaunchPadPage() {
                         !investAmount ||
                         parseFloat(investAmount) <= 0
                       }
-                      className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold py-4 rounded-xl transition-all"
+                      className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 disabled:bg-gray-400 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
                     >
-                      {isProjectPending ? "Investing..." : "Confirm Investment"}
+                      {isProjectPending ? "🔄 Investing..." : "🚀 Confirm Investment"}
                     </button>
                   </ApproveButton>
                 </div>
               )}
 
-              <div className="bg-gray-50 rounded-xl p-6">
-                <h3 className="text-gray-900 font-semibold mb-4">Timeline</h3>
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Start Date:</span>
-                    <span className="text-gray-900">
+              <div className="bg-gradient-to-br from-gray-50/50 to-white/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-100/50">
+                <h3 className="text-gray-900 font-bold text-lg mb-4 flex items-center gap-2">
+                  📅 Project Timeline
+                </h3>
+                <div className="space-y-4 text-sm">
+                  <div className="flex justify-between items-center p-3 bg-white/50 rounded-lg">
+                    <span className="text-gray-600 font-medium">Start Date:</span>
+                    <span className="text-gray-900 font-semibold">
                       {selectedProject.startTime}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">End Date:</span>
-                    <span className="text-gray-900">
+                  <div className="flex justify-between items-center p-3 bg-white/50 rounded-lg">
+                    <span className="text-gray-600 font-medium">End Date:</span>
+                    <span className="text-gray-900 font-semibold">
                       {selectedProject.endTime}
                     </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Status:</span>
+                  <div className="flex justify-between items-center p-3 bg-white/50 rounded-lg">
+                    <span className="text-gray-600 font-medium">Status:</span>
                     <span
-                      className={`font-semibold ${
+                      className={`font-bold px-3 py-1 rounded-full text-xs uppercase tracking-wider ${
                         selectedProject.status === "active"
-                          ? "text-green-600"
+                          ? "bg-green-100 text-green-700"
                           : selectedProject.status === "completed"
-                          ? "text-gray-600"
-                          : "text-blue-600"
+                          ? "bg-gray-100 text-gray-700"
+                          : "bg-blue-100 text-blue-700"
                       }`}
                     >
-                      {selectedProject.status.toUpperCase()}
+                      {selectedProject.status}
                     </span>
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
-        )}
-
-        {/* Free Mint USDC Modal */}
-        {showMintForm && (
-          <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-            onClick={() => setShowMintForm(false)}
-          >
-            <div
-              className="bg-white rounded-2xl p-6 max-w-md w-full border border-gray-200"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  🪙 Free Mint USDC
-                </h2>
-                <button
-                  onClick={() => setShowMintForm(false)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {!isConnected ? (
-                <div className="text-center py-8">
-                  <p className="text-gray-600 mb-4">
-                    Connect your wallet to mint USDC
-                  </p>
-                  <button
-                    disabled
-                    className="w-full bg-gray-400 text-white font-semibold py-3 rounded-xl cursor-not-allowed"
-                  >
-                    Connect Wallet
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <div className="mb-6">
-                    <label className="text-gray-600 text-sm mb-2 block">
-                      Amount to Mint
-                    </label>
-                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-gray-500 text-sm">
-                          Current Balance:{" "}
-                          {parseFloat(usdcBalance || "0").toFixed(2)} USDC
-                        </span>
-                      </div>
-                      <input
-                        type="number"
-                        value={mintAmount}
-                        onChange={(e) => setMintAmount(e.target.value)}
-                        placeholder="0.0"
-                        className="w-full bg-transparent text-gray-900 text-2xl font-semibold focus:outline-none placeholder-gray-400"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6">
-                    <p className="text-yellow-800 text-sm">
-                      🎁 Free USDC for testing! Mint up to 1,000 USDC per
-                      transaction.
-                    </p>
-                  </div>
-
-                  <button
-                    onClick={handleMintUSDC}
-                    disabled={
-                      isMinting ||
-                      !mintAmount ||
-                      parseFloat(mintAmount) <= 0 ||
-                      parseFloat(mintAmount) > 1000
-                    }
-                    className="w-full bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white font-semibold py-4 rounded-xl transition-all"
-                  >
-                    {isMinting ? "Minting..." : "Mint USDC"}
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Free Mint TokenA Modal */}
-        {showMintTokenAForm && (
-          <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-            onClick={() => setShowMintTokenAForm(false)}
-          >
-            <div
-              className="bg-white rounded-2xl p-6 max-w-md w-full border border-gray-200"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  🪙 Free Mint TokenA
-                </h2>
-                <button
-                  onClick={() => setShowMintTokenAForm(false)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {!isConnected ? (
-                <div className="text-center py-8">
-                  <p className="text-gray-600 mb-4">
-                    Connect your wallet to mint TokenA
-                  </p>
-                  <button
-                    disabled
-                    className="w-full bg-gray-400 text-white font-semibold py-3 rounded-xl cursor-not-allowed"
-                  >
-                    Connect Wallet
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <div className="mb-6">
-                    <label className="text-gray-600 text-sm mb-2 block">
-                      Amount to Mint
-                    </label>
-                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-gray-500 text-sm">
-                          Current Balance:{" "}
-                          {parseFloat(tokenABalance || "0").toFixed(2)} TKA
-                        </span>
-                      </div>
-                      <input
-                        type="number"
-                        value={mintTokenAAmount}
-                        onChange={(e) => setMintTokenAAmount(e.target.value)}
-                        placeholder="0.0"
-                        className="w-full bg-transparent text-gray-900 text-2xl font-semibold focus:outline-none placeholder-gray-400"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-4 mb-6">
-                    <p className="text-orange-800 text-sm">
-                      🎁 Free TokenA for testing! Mint up to 1,000 TKA per
-                      transaction.
-                    </p>
-                  </div>
-
-                  <button
-                    onClick={handleMintTokenA}
-                    disabled={
-                      isMinting ||
-                      !mintTokenAAmount ||
-                      parseFloat(mintTokenAAmount) <= 0 ||
-                      parseFloat(mintTokenAAmount) > 1000
-                    }
-                    className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-400 text-white font-semibold py-4 rounded-xl transition-all"
-                  >
-                    {isMinting ? "Minting..." : "Mint TokenA"}
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Free Mint TokenB Modal */}
-        {showMintTokenBForm && (
-          <div
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-            onClick={() => setShowMintTokenBForm(false)}
-          >
-            <div
-              className="bg-white rounded-2xl p-6 max-w-md w-full border border-gray-200"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex justify-between items-center mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">
-                  🎯 Free Mint TokenB
-                </h2>
-                <button
-                  onClick={() => setShowMintTokenBForm(false)}
-                  className="text-gray-400 hover:text-gray-600 text-2xl"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {!isConnected ? (
-                <div className="text-center py-8">
-                  <p className="text-gray-600 mb-4">
-                    Connect your wallet to mint TokenB
-                  </p>
-                  <button
-                    disabled
-                    className="w-full bg-gray-400 text-white font-semibold py-3 rounded-xl cursor-not-allowed"
-                  >
-                    Connect Wallet
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <div className="mb-6">
-                    <label className="text-gray-600 text-sm mb-2 block">
-                      Amount to Mint
-                    </label>
-                    <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="text-gray-500 text-sm">
-                          Current Balance:{" "}
-                          {parseFloat(tokenBBalance || "0").toFixed(2)} TKB
-                        </span>
-                      </div>
-                      <input
-                        type="number"
-                        value={mintTokenBAmount}
-                        onChange={(e) => setMintTokenBAmount(e.target.value)}
-                        placeholder="0.0"
-                        className="w-full bg-transparent text-gray-900 text-2xl font-semibold focus:outline-none placeholder-gray-400"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="bg-cyan-50 border border-cyan-200 rounded-lg p-4 mb-6">
-                    <p className="text-cyan-800 text-sm">
-                      🎁 Free TokenB for testing! Mint up to 1,000 TKB per
-                      transaction.
-                    </p>
-                  </div>
-
-                  <button
-                    onClick={handleMintTokenB}
-                    disabled={
-                      isMinting ||
-                      !mintTokenBAmount ||
-                      parseFloat(mintTokenBAmount) <= 0 ||
-                      parseFloat(mintTokenBAmount) > 1000
-                    }
-                    className="w-full bg-cyan-500 hover:bg-cyan-600 disabled:bg-gray-400 text-white font-semibold py-4 rounded-xl transition-all"
-                  >
-                    {isMinting ? "Minting..." : "Mint TokenB"}
-                  </button>
-                </>
-              )}
             </div>
           </div>
         )}

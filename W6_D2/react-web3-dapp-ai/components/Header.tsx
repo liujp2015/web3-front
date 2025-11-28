@@ -14,6 +14,9 @@ export default function Header() {
             </Link>
           </div>
           <div className="ml-10 flex items-center justify-center gap-6">
+            <Link href="/mint" className="text-gray-600 hover:text-blue-600 transition-colors font-medium">
+              Mint
+            </Link>
             <Link href="/swap" className="text-gray-600 hover:text-blue-600 transition-colors">
               Swap
             </Link>
