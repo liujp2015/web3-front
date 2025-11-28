@@ -2,6 +2,29 @@
 
 All notable changes to react-web3-dapp-ai project will be documented in this file.
 
+## [v1.4.2] - 2025-11-28
+
+### Enhanced
+
+#### 📊 Project Display Formatting Improvements
+- **Progress Display Precision**
+  - Changed progress display from whole numbers to 3 decimal places
+  - Example: "67%" → "67.250%" for more precise tracking
+  - Implemented `formatProgress()` helper function for consistent formatting
+
+- **Smart Amount Formatting**
+  - Added intelligent amount display with M/K suffixes for better readability
+  - Large amounts (≥1M): Display as "$2.50M" instead of "$2,500,000"
+  - Medium amounts (≥1K): Display as "$500.5K" instead of "$500,500"  
+  - Small amounts (<1K): Display as "$250" (whole numbers only)
+  - Implemented `formatAmountInMillions()` helper function
+
+- **Mobile Screen Optimization**
+  - Shorter, cleaner display reduces visual clutter in project cards
+  - Better utilization of limited mobile screen space
+  - Professional financial data presentation consistent with industry standards
+  - Maintained readability while improving information density
+
 ## [v1.4.1] - 2025-11-28
 
 ### Fixed
