@@ -207,25 +207,25 @@ export default function LaunchPadPage() {
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
                   <div className="text-green-600 text-xs font-semibold mb-1 uppercase tracking-wider">Raised</div>
                   <div className="text-gray-900 font-bold text-lg">
-                    ${project.raised}
+                    ${parseFloat(project.raised || '0').toLocaleString('en-US', { maximumFractionDigits: 2 })}
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
                   <div className="text-blue-600 text-xs font-semibold mb-1 uppercase tracking-wider">Goal</div>
                   <div className="text-gray-900 font-bold text-lg">
-                    ${project.totalRaise}
+                    ${parseFloat(project.goal || project.totalRaise || '0').toLocaleString('en-US', { maximumFractionDigits: 2 })}
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
                   <div className="text-purple-600 text-xs font-semibold mb-1 uppercase tracking-wider">Price</div>
                   <div className="text-gray-900 font-bold text-lg">
-                    ${project.tokenPrice}
+                    ${parseFloat(project.price || project.tokenPrice || '0').toFixed(4)}
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl p-4 border border-orange-100">
                   <div className="text-orange-600 text-xs font-semibold mb-1 uppercase tracking-wider">Investors</div>
                   <div className="text-gray-900 font-bold text-lg">
-                    {project.participants}
+                    {project.participants || 0}
                   </div>
                 </div>
               </div>
@@ -352,7 +352,7 @@ export default function LaunchPadPage() {
                       {investAmount
                         ? (
                             parseFloat(investAmount) /
-                            parseFloat(selectedProject.tokenPrice)
+                            parseFloat(selectedProject.price || selectedProject.tokenPrice || '1')
                           ).toFixed(2)
                         : "0.00"}{" "}
                       {selectedProject.symbol}
