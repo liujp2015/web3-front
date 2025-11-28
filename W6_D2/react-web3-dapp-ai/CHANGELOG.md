@@ -4,6 +4,15 @@ All notable changes to react-web3-dapp-ai project will be documented in this fil
 
 ## [v1.5.3] - 2025-11-28
 
+### Fixed
+
+#### 🐛 LaunchPad Investment Function
+- **Buy Function Correction**
+  - Changed from `invest` to `buy` function name to match deployed contract
+  - Updated function call to use BigInt for projectId parameter
+  - Aligned with web3-dapp reference implementation
+  - Investment transactions should now succeed on blockchain
+
 ### Added
 
 #### 📊 Dashboard Chart Visualizations

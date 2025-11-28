@@ -60,8 +60,8 @@ export function useLaunchPad() {
       await writeContract({
         address: launchpadAddress,
         abi: LAUNCHPAD_ABI,
-        functionName: 'invest',
-        args: [projectId, amountWei],
+        functionName: 'buy',
+        args: [BigInt(projectId), amountWei],
       })
     } catch (err) {
       console.error('Investment failed:', err)
