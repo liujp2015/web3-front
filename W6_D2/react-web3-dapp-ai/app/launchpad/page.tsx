@@ -170,11 +170,11 @@ export default function LaunchPadPage() {
         </div>
 
         {/* Project Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-8 mb-6 lg:mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-6 lg:mb-8">
           {currentProjects.map((project: any) => (
             <div
               key={project.id}
-              className="bg-white/80 backdrop-blur-lg rounded-3xl p-6 lg:p-8 shadow-xl border border-white/30 hover:border-purple-300/50 transition-all cursor-pointer transform hover:-translate-y-2 hover:shadow-2xl group"
+              className="bg-white/80 backdrop-blur-lg rounded-3xl p-8 lg:p-10 shadow-xl border border-white/30 hover:border-purple-300/50 transition-all cursor-pointer transform hover:-translate-y-2 hover:shadow-2xl group min-h-[400px]"
               onClick={() => setSelectedProject(project)}
             >
               {/* Project Header with Status */}
@@ -220,28 +220,28 @@ export default function LaunchPadPage() {
               </div>
 
               {/* Project Stats */}
-              <div className="grid grid-cols-2 gap-3 lg:gap-4 mb-4 lg:mb-6">
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-3 lg:p-4 border border-green-100">
-                  <div className="text-green-600 text-xs font-semibold mb-1 uppercase tracking-wider">Raised</div>
-                  <div className="text-gray-900 font-bold text-sm lg:text-lg">
+              <div className="grid grid-cols-2 gap-4 lg:gap-6 mb-6 lg:mb-8">
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 lg:p-5 border border-green-100">
+                  <div className="text-green-600 text-xs font-semibold mb-2 uppercase tracking-wider">Raised</div>
+                  <div className="text-gray-900 font-bold text-base lg:text-xl break-words">
                     {formatAmountInMillions(project.raised || '0')}
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-3 lg:p-4 border border-blue-100">
-                  <div className="text-blue-600 text-xs font-semibold mb-1 uppercase tracking-wider">Goal</div>
-                  <div className="text-gray-900 font-bold text-sm lg:text-lg">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 lg:p-5 border border-blue-100">
+                  <div className="text-blue-600 text-xs font-semibold mb-2 uppercase tracking-wider">Goal</div>
+                  <div className="text-gray-900 font-bold text-base lg:text-xl break-words">
                     {formatAmountInMillions(project.goal || project.totalRaise || '0')}
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-3 lg:p-4 border border-purple-100">
-                  <div className="text-purple-600 text-xs font-semibold mb-1 uppercase tracking-wider">Price</div>
-                  <div className="text-gray-900 font-bold text-sm lg:text-lg">
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 lg:p-5 border border-purple-100">
+                  <div className="text-purple-600 text-xs font-semibold mb-2 uppercase tracking-wider">Price</div>
+                  <div className="text-gray-900 font-bold text-base lg:text-xl break-words">
                     ${parseFloat(project.price || project.tokenPrice || '0').toFixed(4)}
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl p-3 lg:p-4 border border-orange-100">
-                  <div className="text-orange-600 text-xs font-semibold mb-1 uppercase tracking-wider">Investors</div>
-                  <div className="text-gray-900 font-bold text-sm lg:text-lg">
+                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl p-4 lg:p-5 border border-orange-100">
+                  <div className="text-orange-600 text-xs font-semibold mb-2 uppercase tracking-wider">Investors</div>
+                  <div className="text-gray-900 font-bold text-base lg:text-xl break-words">
                     {project.participants || 0}
                   </div>
                 </div>
