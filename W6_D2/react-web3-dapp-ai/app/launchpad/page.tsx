@@ -101,6 +101,23 @@ export default function LaunchPadPage() {
     return badges[status] || badges.upcoming;
   };
 
+  // 格式化金额为M单位
+  const formatAmountInMillions = (amount: string | number): string => {
+    const numAmount = parseFloat(amount.toString() || '0');
+    if (numAmount >= 1000000) {
+      return `$${(numAmount / 1000000).toFixed(2)}M`;
+    } else if (numAmount >= 1000) {
+      return `$${(numAmount / 1000).toFixed(1)}K`;
+    } else {
+      return `$${numAmount.toFixed(0)}`;
+    }
+  };
+
+  // 格式化进度为3位小数
+  const formatProgress = (progress: number): string => {
+    return progress.toFixed(3);
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-8 px-4 lg:py-12">
       <div className="max-w-7xl mx-auto">
@@ -191,7 +208,7 @@ export default function LaunchPadPage() {
                 <div className="flex justify-between text-sm mb-2 lg:mb-3">
                   <span className="text-gray-600 font-medium">Funding Progress</span>
                   <span className="text-gray-900 font-bold">
-                    {project.progress}%
+                    {formatProgress(project.progress)}%
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2 lg:h-3 shadow-inner">
@@ -207,13 +224,13 @@ export default function LaunchPadPage() {
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-3 lg:p-4 border border-green-100">
                   <div className="text-green-600 text-xs font-semibold mb-1 uppercase tracking-wider">Raised</div>
                   <div className="text-gray-900 font-bold text-sm lg:text-lg">
-                    ${parseFloat(project.raised || '0').toLocaleString('en-US', { maximumFractionDigits: 2 })}
+                    {formatAmountInMillions(project.raised || '0')}
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-3 lg:p-4 border border-blue-100">
                   <div className="text-blue-600 text-xs font-semibold mb-1 uppercase tracking-wider">Goal</div>
                   <div className="text-gray-900 font-bold text-sm lg:text-lg">
-                    ${parseFloat(project.goal || project.totalRaise || '0').toLocaleString('en-US', { maximumFractionDigits: 2 })}
+                    {formatAmountInMillions(project.goal || project.totalRaise || '0')}
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-3 lg:p-4 border border-purple-100">
