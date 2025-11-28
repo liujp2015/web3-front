@@ -23,6 +23,20 @@ export default function LaunchPadPage() {
   const launchpadAddress = getProtocolAddress(sepolia.id, 'LAUNCHPAD') as `0x${string}` | undefined;
   const { balance: usdcBalance } = useTokenBalance(usdcAddress, address);
 
+  // Read user purchase info for selected project
+  const { data: userPurchase } = useReadContract({
+    address: launchpadAddress,
+    abi: LAUNCHPAD_ABI,
+    functionName: 'getUserInfo',
+    args: selectedProject && address ? [BigInt(selectedProject.id), address] : undefined,
+    query: {
+      enabled: Boolean(launchpadAddress && address && selectedProject)
+    }
+  })
+
+  const userPurchased = userPurchase && Array.isArray(userPurchase) ? formatUnits(userPurchase[0] as bigint, 18) : '0'
+  const userClaimed = userPurchase && Array.isArray(userPurchase) ? (userPurchase[1] as bigint) > 0n : false
+
   const {
     investInProject,
     isPending: isProjectPending,
@@ -375,30 +389,15 @@ export default function LaunchPadPage() {
               </p>
 
               {/* User Purchase Info */}
-              {address && selectedProject && (() => {
-                const { data: userPurchase } = useReadContract({
-                  address: launchpadAddress,
-                  abi: LAUNCHPAD_ABI,
-                  functionName: 'getUserInfo',
-                  args: [BigInt(selectedProject.id), address],
-                  query: {
-                    enabled: Boolean(launchpadAddress && address)
-                  }
-                })
-
-                const userPurchased = userPurchase && Array.isArray(userPurchase) ? formatUnits(userPurchase[0] as bigint, 18) : '0'
-                const userClaimed = userPurchase && Array.isArray(userPurchase) ? (userPurchase[1] as bigint) > 0n : false
-
-                return parseFloat(userPurchased) > 0 ? (
-                  <div className="mb-4 lg:mb-6 p-4 bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl">
-                    <div className="text-sm text-purple-600 font-semibold mb-1">Your Purchase</div>
-                    <div className="text-2xl font-bold text-purple-700">{parseFloat(userPurchased).toFixed(4)} {selectedProject.symbol}</div>
-                    {userClaimed && (
-                      <div className="text-xs text-green-600 mt-2 font-semibold">✓ Claimed</div>
-                    )}
-                  </div>
-                ) : null
-              })()}
+              {address && parseFloat(userPurchased) > 0 && (
+                <div className="mb-4 lg:mb-6 p-4 bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl">
+                  <div className="text-sm text-purple-600 font-semibold mb-1">Your Purchase</div>
+                  <div className="text-2xl font-bold text-purple-700">{parseFloat(userPurchased).toFixed(4)} {selectedProject.symbol}</div>
+                  {userClaimed && (
+                    <div className="text-xs text-green-600 mt-2 font-semibold">✓ Claimed</div>
+                  )}
+                </div>
+              )}
 
               {selectedProject.status === "active" && (
                 <div className="bg-gradient-to-br from-purple-50/50 to-indigo-50/50 backdrop-blur-sm rounded-2xl p-4 lg:p-6 mb-4 lg:mb-6 border border-purple-100/50">
