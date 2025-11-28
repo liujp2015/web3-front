@@ -252,16 +252,16 @@ export default function LaunchPadPage() {
 
               {/* Project Stats */}
               <div className="grid grid-cols-2 gap-4 lg:gap-6 mb-6 lg:mb-8">
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 lg:p-5 border border-green-100">
-                  <div className="text-green-600 text-xs font-semibold mb-2 uppercase tracking-wider">Raised</div>
-                  <div className="text-gray-900 font-bold text-base lg:text-xl break-words">
-                    {formatAmountInMillions(project.raised || '0')}
-                  </div>
-                </div>
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 lg:p-5 border border-blue-100">
                   <div className="text-blue-600 text-xs font-semibold mb-2 uppercase tracking-wider">Goal</div>
                   <div className="text-gray-900 font-bold text-base lg:text-xl break-words">
                     {formatAmountInMillions(project.goal || project.totalRaise || '0')}
+                  </div>
+                </div>
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 lg:p-5 border border-green-100">
+                  <div className="text-green-600 text-xs font-semibold mb-2 uppercase tracking-wider">Raised</div>
+                  <div className="text-gray-900 font-bold text-base lg:text-xl break-words">
+                    {formatAmountInMillions(project.raised || '0')}
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 lg:p-5 border border-purple-100">
