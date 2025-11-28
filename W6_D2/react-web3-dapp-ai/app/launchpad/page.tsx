@@ -102,48 +102,48 @@ export default function LaunchPadPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 py-8 px-4 lg:py-12">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="text-6xl mb-4 animate-bounce">🚀</div>
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-4">LaunchPad</h1>
-          <p className="text-gray-700 text-xl max-w-2xl mx-auto leading-relaxed">
+        <div className="text-center mb-6 lg:mb-8">
+          <div className="text-4xl lg:text-6xl mb-3 lg:mb-4 animate-bounce">🚀</div>
+          <h1 className="text-3xl lg:text-5xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-3 lg:mb-4">LaunchPad</h1>
+          <p className="text-gray-700 text-base lg:text-xl max-w-2xl mx-auto leading-relaxed px-4">
             Discover and invest in the most promising blockchain projects
           </p>
         </div>
 
         {/* Action Bar */}
-        <div className="bg-white/70 backdrop-blur-lg rounded-3xl shadow-xl p-6 mb-8 border border-white/20">
-          <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="bg-white/70 backdrop-blur-lg rounded-3xl shadow-xl p-4 lg:p-6 mb-6 lg:mb-8 border border-white/20">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             {/* Left: Action Buttons */}
-            <div className="flex flex-wrap gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 w-full sm:w-auto">
               <a
                 href="/mint"
-                className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold px-6 py-3 rounded-2xl transition-all flex items-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold px-4 lg:px-6 py-3 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
-                <span className="text-2xl">🪙</span>
-                <span className="hidden sm:inline">Mint Tokens</span>
+                <span className="text-xl lg:text-2xl">🪙</span>
+                <span>Mint Tokens</span>
               </a>
 
               {isConnected && (
                 <a
                   href="/launchpad/create"
-                  className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold px-6 py-3 rounded-2xl transition-all flex items-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  className="bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold px-4 lg:px-6 py-3 rounded-2xl transition-all flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
-                  <span className="text-2xl">✨</span>
-                  <span className="hidden sm:inline">Create Project</span>
+                  <span className="text-xl lg:text-2xl">✨</span>
+                  <span>Create Project</span>
                 </a>
               )}
             </div>
 
             {/* Right: Balance Display */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 w-full sm:w-auto justify-center sm:justify-end">
               <div className="flex items-center gap-3 bg-gradient-to-r from-indigo-100/80 to-purple-100/80 backdrop-blur-sm rounded-2xl px-4 py-3 border border-indigo-200/50">
-                <span className="text-3xl">💎</span>
+                <span className="text-2xl lg:text-3xl">💎</span>
                 <div className="flex flex-col">
                   <span className="text-xs text-gray-600 font-medium">BALANCE</span>
-                  <span className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                  <span className="text-lg lg:text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                     ${parseFloat(usdcBalance || "0").toFixed(2)}
                   </span>
                 </div>
@@ -153,18 +153,18 @@ export default function LaunchPadPage() {
         </div>
 
         {/* Project Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-8 mb-6 lg:mb-8">
           {currentProjects.map((project: any) => (
             <div
               key={project.id}
-              className="bg-white/80 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/30 hover:border-purple-300/50 transition-all cursor-pointer transform hover:-translate-y-2 hover:shadow-2xl group"
+              className="bg-white/80 backdrop-blur-lg rounded-3xl p-6 lg:p-8 shadow-xl border border-white/30 hover:border-purple-300/50 transition-all cursor-pointer transform hover:-translate-y-2 hover:shadow-2xl group"
               onClick={() => setSelectedProject(project)}
             >
               {/* Project Header with Status */}
-              <div className="flex items-start justify-between mb-6">
-                <div className="flex items-center">
+              <div className="flex items-start justify-between mb-4 lg:mb-6">
+                <div className="flex items-center min-w-0 flex-1">
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-1">
+                    <h3 className="text-lg lg:text-xl font-bold text-gray-900 mb-1 truncate">
                       {project.name || project.symbol}
                     </h3>
                     <div className="text-gray-500 text-sm font-medium">
@@ -173,58 +173,58 @@ export default function LaunchPadPage() {
                   </div>
                 </div>
                 <div
-                  className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider ${getStatusBadge(
+                  className={`px-3 lg:px-4 py-1 lg:py-2 rounded-full text-xs font-bold uppercase tracking-wider ${getStatusBadge(
                     project.status
-                  )} shadow-lg`}
+                  )} shadow-lg flex-shrink-0 ml-2`}
                 >
                   {project.status}
                 </div>
               </div>
 
               {/* Project Description */}
-              <p className="text-gray-600 text-sm mb-6 line-clamp-2 leading-relaxed">
+              <p className="text-gray-600 text-sm mb-4 lg:mb-6 line-clamp-2 leading-relaxed">
                 {project.description || 'A promising blockchain project with innovative solutions.'}
               </p>
 
               {/* Progress Bar */}
-              <div className="mb-6">
-                <div className="flex justify-between text-sm mb-3">
+              <div className="mb-4 lg:mb-6">
+                <div className="flex justify-between text-sm mb-2 lg:mb-3">
                   <span className="text-gray-600 font-medium">Funding Progress</span>
                   <span className="text-gray-900 font-bold">
                     {project.progress}%
                   </span>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
+                <div className="w-full bg-gray-200 rounded-full h-2 lg:h-3 shadow-inner">
                   <div
-                    className="bg-gradient-to-r from-purple-500 to-indigo-600 h-3 rounded-full transition-all duration-1000 ease-out shadow-lg"
+                    className="bg-gradient-to-r from-purple-500 to-indigo-600 h-2 lg:h-3 rounded-full transition-all duration-1000 ease-out shadow-lg"
                     style={{ width: `${project.progress}%` }}
                   />
                 </div>
               </div>
 
               {/* Project Stats */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-100">
+              <div className="grid grid-cols-2 gap-3 lg:gap-4 mb-4 lg:mb-6">
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-3 lg:p-4 border border-green-100">
                   <div className="text-green-600 text-xs font-semibold mb-1 uppercase tracking-wider">Raised</div>
-                  <div className="text-gray-900 font-bold text-lg">
+                  <div className="text-gray-900 font-bold text-sm lg:text-lg">
                     ${parseFloat(project.raised || '0').toLocaleString('en-US', { maximumFractionDigits: 2 })}
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-3 lg:p-4 border border-blue-100">
                   <div className="text-blue-600 text-xs font-semibold mb-1 uppercase tracking-wider">Goal</div>
-                  <div className="text-gray-900 font-bold text-lg">
+                  <div className="text-gray-900 font-bold text-sm lg:text-lg">
                     ${parseFloat(project.goal || project.totalRaise || '0').toLocaleString('en-US', { maximumFractionDigits: 2 })}
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-4 border border-purple-100">
+                <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-3 lg:p-4 border border-purple-100">
                   <div className="text-purple-600 text-xs font-semibold mb-1 uppercase tracking-wider">Price</div>
-                  <div className="text-gray-900 font-bold text-lg">
+                  <div className="text-gray-900 font-bold text-sm lg:text-lg">
                     ${parseFloat(project.price || project.tokenPrice || '0').toFixed(4)}
                   </div>
                 </div>
-                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl p-4 border border-orange-100">
+                <div className="bg-gradient-to-br from-orange-50 to-yellow-50 rounded-xl p-3 lg:p-4 border border-orange-100">
                   <div className="text-orange-600 text-xs font-semibold mb-1 uppercase tracking-wider">Investors</div>
-                  <div className="text-gray-900 font-bold text-lg">
+                  <div className="text-gray-900 font-bold text-sm lg:text-lg">
                     {project.participants || 0}
                   </div>
                 </div>
@@ -301,52 +301,52 @@ export default function LaunchPadPage() {
             onClick={() => setSelectedProject(null)}
           >
             <div
-              className="bg-white/95 backdrop-blur-lg rounded-3xl p-8 max-w-2xl w-full border border-white/30 shadow-2xl"
+              className="bg-white/95 backdrop-blur-lg rounded-3xl p-4 lg:p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/30 shadow-2xl"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex justify-between items-start mb-6">
+              <div className="flex justify-between items-start mb-4 lg:mb-6">
                 <div>
-                  <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+                  <h2 className="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-2">
                     {selectedProject.name || selectedProject.symbol}
                   </h2>
-                  <div className="text-gray-600 text-lg font-medium">
+                  <div className="text-gray-600 text-base lg:text-lg font-medium">
                     ${selectedProject.symbol}
                   </div>
                 </div>
                 <button
                   onClick={() => setSelectedProject(null)}
-                  className="text-gray-400 hover:text-gray-600 text-3xl p-2 hover:bg-gray-100 rounded-full transition-all"
+                  className="text-gray-400 hover:text-gray-600 text-2xl lg:text-3xl p-2 hover:bg-gray-100 rounded-full transition-all"
                 >
                   ✕
                 </button>
               </div>
 
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+              <p className="text-gray-600 mb-4 lg:mb-6 text-base lg:text-lg leading-relaxed">
                 {selectedProject.description || 'A revolutionary blockchain project bringing innovative solutions to the decentralized ecosystem.'}
               </p>
 
               {selectedProject.status === "active" && (
-                <div className="bg-gradient-to-br from-purple-50/50 to-indigo-50/50 backdrop-blur-sm rounded-2xl p-6 mb-6 border border-purple-100/50">
+                <div className="bg-gradient-to-br from-purple-50/50 to-indigo-50/50 backdrop-blur-sm rounded-2xl p-4 lg:p-6 mb-4 lg:mb-6 border border-purple-100/50">
                   <label className="text-gray-700 text-sm font-semibold mb-3 block">
                     Investment Amount (USDC)
                   </label>
-                  <div className="flex items-center bg-white/80 backdrop-blur-sm rounded-xl px-4 py-4 mb-4 border border-gray-200 shadow-sm">
+                  <div className="flex items-center bg-white/80 backdrop-blur-sm rounded-xl px-3 lg:px-4 py-3 lg:py-4 mb-4 border border-gray-200 shadow-sm">
                     <input
                       type="number"
                       value={investAmount}
                       onChange={(e) => setInvestAmount(e.target.value)}
                       placeholder="0.0"
-                      className="flex-1 bg-transparent text-gray-900 text-xl font-semibold focus:outline-none placeholder-gray-400"
+                      className="flex-1 bg-transparent text-gray-900 text-lg lg:text-xl font-semibold focus:outline-none placeholder-gray-400"
                     />
                     <button 
                       onClick={() => setInvestAmount(usdcBalance || '0')}
-                      className="text-purple-600 text-sm font-bold hover:text-purple-700 px-3 py-1 rounded-lg hover:bg-purple-50 transition-all"
+                      className="text-purple-600 text-sm font-bold hover:text-purple-700 px-2 lg:px-3 py-1 rounded-lg hover:bg-purple-50 transition-all"
                     >
                       MAX
                     </button>
                   </div>
 
-                  <div className="flex justify-between text-sm text-gray-600 mb-6 p-3 bg-white/50 rounded-lg">
+                  <div className="flex justify-between text-sm text-gray-600 mb-4 lg:mb-6 p-3 bg-white/50 rounded-lg">
                     <span className="font-medium">You will receive:</span>
                     <span className="text-gray-900 font-bold">
                       {investAmount
@@ -377,7 +377,7 @@ export default function LaunchPadPage() {
                         !investAmount ||
                         parseFloat(investAmount) <= 0
                       }
-                      className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 disabled:bg-gray-400 text-white font-bold py-4 rounded-xl transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
+                      className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 disabled:bg-gray-400 text-white font-bold py-3 lg:py-4 rounded-xl transition-all transform hover:scale-105 shadow-lg hover:shadow-xl"
                     >
                       {isProjectPending ? "🔄 Investing..." : "🚀 Confirm Investment"}
                     </button>
@@ -385,11 +385,11 @@ export default function LaunchPadPage() {
                 </div>
               )}
 
-              <div className="bg-gradient-to-br from-gray-50/50 to-white/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-100/50">
-                <h3 className="text-gray-900 font-bold text-lg mb-4 flex items-center gap-2">
+              <div className="bg-gradient-to-br from-gray-50/50 to-white/50 backdrop-blur-sm rounded-2xl p-4 lg:p-6 border border-gray-100/50">
+                <h3 className="text-gray-900 font-bold text-base lg:text-lg mb-4 flex items-center gap-2">
                   📅 Project Timeline
                 </h3>
-                <div className="space-y-4 text-sm">
+                <div className="space-y-3 lg:space-y-4 text-sm">
                   <div className="flex justify-between items-center p-3 bg-white/50 rounded-lg">
                     <span className="text-gray-600 font-medium">Start Date:</span>
                     <span className="text-gray-900 font-semibold">

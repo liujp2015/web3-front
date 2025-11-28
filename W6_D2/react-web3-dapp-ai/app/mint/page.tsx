@@ -102,72 +102,72 @@ export default function MintPage() {
   }
 
   return (
-    <div className="container max-w-4xl mx-auto py-12">
+    <div className="container max-w-4xl mx-auto py-8 px-4 lg:py-12">
       {/* Header */}
-      <div className="text-center mb-8">
-        <div className="text-6xl mb-4">🪙</div>
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Token Mint</h1>
-        <p className="text-gray-600 text-lg">
+      <div className="text-center mb-6 lg:mb-8">
+        <div className="text-4xl lg:text-6xl mb-3 lg:mb-4">🪙</div>
+        <h1 className="text-2xl lg:text-4xl font-bold text-gray-900 mb-3 lg:mb-4">Token Mint</h1>
+        <p className="text-gray-600 text-base lg:text-lg px-4">
           Mint test tokens for development and testing
         </p>
       </div>
 
       {/* Balance Display */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg p-6 text-white">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4 mb-6 lg:mb-8">
+        <div className="bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg p-4 lg:p-6 text-white">
           <div className="flex items-center justify-between mb-2">
-            <div className="text-3xl">💰</div>
-            <div className="text-sm opacity-90">USDC</div>
+            <div className="text-2xl lg:text-3xl">💰</div>
+            <div className="text-xs lg:text-sm opacity-90">USDC</div>
           </div>
-          <div className="text-2xl font-bold mb-1">
+          <div className="text-xl lg:text-2xl font-bold mb-1">
             {parseFloat(usdcBalance || '0').toFixed(2)}
           </div>
-          <div className="text-sm opacity-75">Current Balance</div>
+          <div className="text-xs lg:text-sm opacity-75">Current Balance</div>
         </div>
 
-        <div className="bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-lg p-6 text-white">
+        <div className="bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-lg p-4 lg:p-6 text-white">
           <div className="flex items-center justify-between mb-2">
-            <div className="text-3xl">🔶</div>
-            <div className="text-sm opacity-90">TKA</div>
+            <div className="text-2xl lg:text-3xl">🔶</div>
+            <div className="text-xs lg:text-sm opacity-90">TKA</div>
           </div>
-          <div className="text-2xl font-bold mb-1">
+          <div className="text-xl lg:text-2xl font-bold mb-1">
             {parseFloat(tokenABalance || '0').toFixed(2)}
           </div>
-          <div className="text-sm opacity-75">Current Balance</div>
+          <div className="text-xs lg:text-sm opacity-75">Current Balance</div>
         </div>
 
-        <div className="bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl shadow-lg p-6 text-white">
+        <div className="bg-gradient-to-br from-cyan-500 to-blue-600 rounded-2xl shadow-lg p-4 lg:p-6 text-white sm:col-span-2 lg:col-span-1">
           <div className="flex items-center justify-between mb-2">
-            <div className="text-3xl">🔷</div>
-            <div className="text-sm opacity-90">TKB</div>
+            <div className="text-2xl lg:text-3xl">🔷</div>
+            <div className="text-xs lg:text-sm opacity-90">TKB</div>
           </div>
-          <div className="text-2xl font-bold mb-1">
+          <div className="text-xl lg:text-2xl font-bold mb-1">
             {parseFloat(tokenBBalance || '0').toFixed(2)}
           </div>
-          <div className="text-sm opacity-75">Current Balance</div>
+          <div className="text-xs lg:text-sm opacity-75">Current Balance</div>
         </div>
       </div>
 
       {!isConnected ? (
-        <div className="bg-white rounded-2xl shadow-lg p-8 text-center">
-          <div className="text-6xl mb-4">🔗</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Connect Your Wallet</h2>
-          <p className="text-gray-600 mb-6">
+        <div className="bg-white rounded-2xl shadow-lg p-6 lg:p-8 text-center">
+          <div className="text-4xl lg:text-6xl mb-4">🔗</div>
+          <h2 className="text-xl lg:text-2xl font-bold text-gray-900 mb-4">Connect Your Wallet</h2>
+          <p className="text-gray-600 mb-6 px-4">
             Please connect your wallet to start minting tokens
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
           {/* USDC Mint Card */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
-            <div className="text-center mb-6">
-              <div className="text-4xl mb-3">💰</div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Mint USDC</h3>
+          <div className="bg-white rounded-2xl shadow-lg p-4 lg:p-6 border border-gray-200">
+            <div className="text-center mb-4 lg:mb-6">
+              <div className="text-3xl lg:text-4xl mb-2 lg:mb-3">💰</div>
+              <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">Mint USDC</h3>
               <p className="text-gray-600 text-sm">Free USDC for testing</p>
             </div>
 
-            <div className="mb-6">
-              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+            <div className="mb-4 lg:mb-6">
+              <div className="bg-gray-50 rounded-xl p-3 lg:p-4 border border-gray-200">
                 <div className="flex justify-between items-center mb-2">
                   <label className="text-gray-600 text-sm">Amount</label>
                   <button 
@@ -182,7 +182,7 @@ export default function MintPage() {
                   value={mintAmountUSDC}
                   onChange={(e) => setMintAmountUSDC(e.target.value)}
                   placeholder="0.0"
-                  className="w-full bg-transparent text-gray-900 text-xl font-semibold focus:outline-none placeholder-gray-400"
+                  className="w-full bg-transparent text-gray-900 text-lg lg:text-xl font-semibold focus:outline-none placeholder-gray-400"
                   max="1000"
                 />
               </div>
@@ -210,15 +210,15 @@ export default function MintPage() {
           </div>
 
           {/* TKA Mint Card */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
-            <div className="text-center mb-6">
-              <div className="text-4xl mb-3">🔶</div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Mint TKA</h3>
+          <div className="bg-white rounded-2xl shadow-lg p-4 lg:p-6 border border-gray-200">
+            <div className="text-center mb-4 lg:mb-6">
+              <div className="text-3xl lg:text-4xl mb-2 lg:mb-3">🔶</div>
+              <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">Mint TKA</h3>
               <p className="text-gray-600 text-sm">Token A for liquidity pools</p>
             </div>
 
-            <div className="mb-6">
-              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+            <div className="mb-4 lg:mb-6">
+              <div className="bg-gray-50 rounded-xl p-3 lg:p-4 border border-gray-200">
                 <div className="flex justify-between items-center mb-2">
                   <label className="text-gray-600 text-sm">Amount</label>
                   <button 
@@ -233,7 +233,7 @@ export default function MintPage() {
                   value={mintAmountTKA}
                   onChange={(e) => setMintAmountTKA(e.target.value)}
                   placeholder="0.0"
-                  className="w-full bg-transparent text-gray-900 text-xl font-semibold focus:outline-none placeholder-gray-400"
+                  className="w-full bg-transparent text-gray-900 text-lg lg:text-xl font-semibold focus:outline-none placeholder-gray-400"
                   max="1000"
                 />
               </div>
@@ -261,15 +261,15 @@ export default function MintPage() {
           </div>
 
           {/* TKB Mint Card */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-200">
-            <div className="text-center mb-6">
-              <div className="text-4xl mb-3">🔷</div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Mint TKB</h3>
+          <div className="bg-white rounded-2xl shadow-lg p-4 lg:p-6 border border-gray-200">
+            <div className="text-center mb-4 lg:mb-6">
+              <div className="text-3xl lg:text-4xl mb-2 lg:mb-3">🔷</div>
+              <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-2">Mint TKB</h3>
               <p className="text-gray-600 text-sm">Token B for liquidity pools</p>
             </div>
 
-            <div className="mb-6">
-              <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+            <div className="mb-4 lg:mb-6">
+              <div className="bg-gray-50 rounded-xl p-3 lg:p-4 border border-gray-200">
                 <div className="flex justify-between items-center mb-2">
                   <label className="text-gray-600 text-sm">Amount</label>
                   <button 
@@ -284,7 +284,7 @@ export default function MintPage() {
                   value={mintAmountTKB}
                   onChange={(e) => setMintAmountTKB(e.target.value)}
                   placeholder="0.0"
-                  className="w-full bg-transparent text-gray-900 text-xl font-semibold focus:outline-none placeholder-gray-400"
+                  className="w-full bg-transparent text-gray-900 text-lg lg:text-xl font-semibold focus:outline-none placeholder-gray-400"
                   max="1000"
                 />
               </div>
@@ -330,8 +330,8 @@ export default function MintPage() {
       )}
 
       {/* Info Section */}
-      <div className="mt-8 bg-gray-50 rounded-2xl p-6">
-        <h3 className="text-xl font-semibold text-gray-900 mb-4">Token Information</h3>
+      <div className="mt-6 lg:mt-8 bg-gray-50 rounded-2xl p-4 lg:p-6">
+        <h3 className="text-lg lg:text-xl font-semibold text-gray-900 mb-4">Token Information</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
           <div>
             <h4 className="font-semibold text-gray-900 mb-2">💰 USDC</h4>
