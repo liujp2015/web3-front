@@ -28,6 +28,14 @@ All notable changes to react-web3-dapp-ai project will be documented in this fil
 
 ### Fixed
 
+#### 🐛 Dashboard API Missing Error
+- **Token Price API Not Found**
+  - Fixed "Unexpected token '<', '<!DOCTYPE'..." JSON parse error
+  - Created missing `/api/token/price` route
+  - Generates mock historical price data (24 hours, hourly intervals)
+  - Returns price, symbol, 24h change, and time series data
+  - Resolves dashboard page load failure
+
 #### 🐛 React Hooks Violation in LaunchPad
 - **Hooks Order Error**
   - Fixed "React has detected a change in the order of Hooks" error
