@@ -168,7 +168,7 @@ export default function SwapPage() {
           </p>
         </div>
 
-        <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200">
+        <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-200 overflow-visible">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-xl font-bold">Swap</h2>
@@ -191,9 +191,9 @@ export default function SwapPage() {
             </div>
           </div>
 
-          <div className="mb-4">
+          <div className="mb-4 relative overflow-visible">
             <label className="text-gray-600 text-sm mb-3 block font-medium">From</label>
-            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-5 border border-gray-200 hover:border-blue-300 transition-all">
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-5 border border-gray-200 hover:border-blue-300 transition-all overflow-visible relative">
               <div className="flex items-center justify-between gap-4">
                 <input
                   type="number"
@@ -202,17 +202,24 @@ export default function SwapPage() {
                   placeholder="0.0"
                   className="flex-1 bg-transparent text-gray-900 text-3xl font-bold focus:outline-none placeholder-gray-400"
                 />
-                <select
-                  value={tokenIn}
-                  onChange={(e) => setTokenIn(e.target.value)}
-                  className="bg-white text-gray-900 rounded-xl px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-lg shadow-sm hover:shadow-md transition-all cursor-pointer"
-                >
-                  {Object.keys(TOKENS).map((symbol) => (
-                    <option key={symbol} value={symbol}>
-                      {symbol}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <select
+                    value={tokenIn}
+                    onChange={(e) => setTokenIn(e.target.value)}
+                    className="bg-white text-gray-900 rounded-xl px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-lg shadow-sm hover:shadow-md transition-all cursor-pointer appearance-none pr-10"
+                  >
+                    {Object.keys(TOKENS).map((symbol) => (
+                      <option key={symbol} value={symbol}>
+                        {symbol}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-600">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -228,9 +235,9 @@ export default function SwapPage() {
             </button>
           </div>
 
-          <div className="mb-6">
+          <div className="mb-6 relative overflow-visible">
             <label className="text-gray-600 text-sm mb-3 block font-medium">To</label>
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-200 hover:border-blue-400 transition-all">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-200 hover:border-blue-400 transition-all overflow-visible relative">
               <div className="flex items-center justify-between gap-4">
                 <div className="flex-1 text-gray-900 text-3xl font-bold">
                   {isLoadingQuote ? (
@@ -239,17 +246,24 @@ export default function SwapPage() {
                     <span>{amountOut || '0.0'}</span>
                   )}
                 </div>
-                <select
-                  value={tokenOut}
-                  onChange={(e) => setTokenOut(e.target.value)}
-                  className="bg-white text-gray-900 rounded-xl px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-lg shadow-sm hover:shadow-md transition-all cursor-pointer"
-                >
-                  {Object.keys(TOKENS).filter(s => s !== tokenIn).map((symbol) => (
-                    <option key={symbol} value={symbol}>
-                      {symbol}
-                    </option>
-                  ))}
-                </select>
+                <div className="relative">
+                  <select
+                    value={tokenOut}
+                    onChange={(e) => setTokenOut(e.target.value)}
+                    className="bg-white text-gray-900 rounded-xl px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-lg shadow-sm hover:shadow-md transition-all cursor-pointer appearance-none pr-10"
+                  >
+                    {Object.keys(TOKENS).filter(s => s !== tokenIn).map((symbol) => (
+                      <option key={symbol} value={symbol}>
+                        {symbol}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-600">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
