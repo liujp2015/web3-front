@@ -4,6 +4,17 @@ All notable changes to react-web3-dapp-ai project will be documented in this fil
 
 ## [v1.5.3] - 2025-11-28
 
+### Added
+
+#### 🧪 Test Wallet Page
+- **Wallet Information Display Page**
+  - Created `/test-wallet` page to demonstrate Wagmi hooks usage
+  - Displays connected wallet address, network, and balance
+  - Shows connection status with visual indicators
+  - Includes disconnect functionality
+  - Educational component showing Wagmi hooks in action
+  - Reference implementation from day4.md requirements
+
 ### Changed
 
 #### 🔄 LaunchPad Stats Display
