@@ -107,13 +107,13 @@ export default function Header() {
 
         {/* Mobile Navigation Menu */}
         <div
-          className={`lg:hidden transition-all duration-300 ease-in-out ${
+          className={`lg:hidden transition-all duration-300 ease-in-out relative z-50 ${
             isMobileMenuOpen
               ? 'max-h-96 opacity-100 visible'
               : 'max-h-0 opacity-0 invisible overflow-hidden'
           }`}
         >
-          <div className="pb-4 pt-2 space-y-1 bg-white border-t border-gray-200">
+          <div className="pb-4 pt-2 space-y-1 bg-white border-t border-gray-200 shadow-lg">
             {navigation.map((item) => (
               <Link
                 key={item.name}
