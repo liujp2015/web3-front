@@ -28,6 +28,14 @@ All notable changes to react-web3-dapp-ai project will be documented in this fil
 
 ### Fixed
 
+#### 🐛 React Hooks Violation in LaunchPad
+- **Hooks Order Error**
+  - Fixed "React has detected a change in the order of Hooks" error
+  - Moved `useReadContract` hook from IIFE to component top level
+  - Removed immediately-invoked function expression wrapper
+  - Hooks must be called at top level per React Rules of Hooks
+  - Resolved error when clicking "Invest Now" button
+
 #### 🐛 LaunchPad Investment Function
 - **Buy Function Correction**
   - Changed from `invest` to `buy` function name to match deployed contract
