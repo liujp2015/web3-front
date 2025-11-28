@@ -192,13 +192,20 @@ export default function SwapPage() {
           </div>
 
           <div className="mb-4">
-            <label className="text-gray-600 text-sm mb-2 block">From</label>
-            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-              <div className="flex justify-between items-center mb-2">
+            <label className="text-gray-600 text-sm mb-3 block font-medium">From</label>
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-5 border border-gray-200 hover:border-blue-300 transition-all">
+              <div className="flex items-center justify-between gap-4">
+                <input
+                  type="number"
+                  value={amountIn}
+                  onChange={(e) => setAmountIn(e.target.value)}
+                  placeholder="0.0"
+                  className="flex-1 bg-transparent text-gray-900 text-3xl font-bold focus:outline-none placeholder-gray-400"
+                />
                 <select
                   value={tokenIn}
                   onChange={(e) => setTokenIn(e.target.value)}
-                  className="bg-white text-gray-900 rounded-lg px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="bg-white text-gray-900 rounded-xl px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-lg shadow-sm hover:shadow-md transition-all cursor-pointer"
                 >
                   {Object.keys(TOKENS).map((symbol) => (
                     <option key={symbol} value={symbol}>
@@ -207,35 +214,35 @@ export default function SwapPage() {
                   ))}
                 </select>
               </div>
-              <input
-                type="number"
-                value={amountIn}
-                onChange={(e) => setAmountIn(e.target.value)}
-                placeholder="0.0"
-                className="w-full bg-transparent text-gray-900 text-2xl font-semibold focus:outline-none placeholder-gray-400"
-              />
             </div>
           </div>
 
-          <div className="flex justify-center my-4">
+          <div className="flex justify-center -my-2 relative z-10">
             <button
               onClick={switchTokens}
-              className="bg-gray-100 hover:bg-gray-200 rounded-full p-3 border border-gray-300 transition-all"
+              className="bg-white hover:bg-blue-50 rounded-full p-3 border-4 border-gray-100 hover:border-blue-200 shadow-md hover:shadow-lg transition-all transform hover:scale-110 hover:rotate-180 duration-300"
             >
-              <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
               </svg>
             </button>
           </div>
 
           <div className="mb-6">
-            <label className="text-gray-600 text-sm mb-2 block">To</label>
-            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-              <div className="flex justify-between items-center mb-2">
+            <label className="text-gray-600 text-sm mb-3 block font-medium">To</label>
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-5 border border-blue-200 hover:border-blue-400 transition-all">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1 text-gray-900 text-3xl font-bold">
+                  {isLoadingQuote ? (
+                    <span className="text-blue-600 animate-pulse">Calculating...</span>
+                  ) : (
+                    <span>{amountOut || '0.0'}</span>
+                  )}
+                </div>
                 <select
                   value={tokenOut}
                   onChange={(e) => setTokenOut(e.target.value)}
-                  className="bg-white text-gray-900 rounded-lg px-3 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="bg-white text-gray-900 rounded-xl px-4 py-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-lg shadow-sm hover:shadow-md transition-all cursor-pointer"
                 >
                   {Object.keys(TOKENS).filter(s => s !== tokenIn).map((symbol) => (
                     <option key={symbol} value={symbol}>
@@ -243,9 +250,6 @@ export default function SwapPage() {
                     </option>
                   ))}
                 </select>
-              </div>
-              <div className="w-full text-gray-900 text-2xl font-semibold">
-                {isLoadingQuote ? 'Calculating...' : (amountOut || '0.0')}
               </div>
             </div>
           </div>
