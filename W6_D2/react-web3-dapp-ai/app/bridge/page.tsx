@@ -31,7 +31,7 @@ const SUPPORTED_TOKENS = [
 ]
 
 // Transfer record component
-function TransferRecord({ transfer, onStatusUpdate }) {
+function TransferRecord({ transfer, onStatusUpdate }: { transfer: any; onStatusUpdate?: (id: string, status: string) => void }) {
   const [currentStatus, setCurrentStatus] = useState(transfer.status)
   const [progress, setProgress] = useState(0)
 
@@ -56,7 +56,7 @@ function TransferRecord({ transfer, onStatusUpdate }) {
     return () => clearInterval(interval)
   }, [currentStatus, transfer.transferId, onStatusUpdate])
 
-  const getStatusInfo = (status) => {
+  const getStatusInfo = (status: string) => {
     switch (status) {
       case 'queued':
         return { text: 'Queued', color: 'bg-yellow-100 text-yellow-800', icon: '⏳' }
@@ -144,7 +144,7 @@ export default function BridgePage() {
   // Read user token balance
   const tokenData = SUPPORTED_TOKENS.find(t => t.symbol === selectedToken)
   const { data: balance } = useReadContract({
-    address: tokenData?.address,
+    address: tokenData?.address as `0x${string}` | undefined,
     abi: ERC20_ABI,
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
@@ -153,7 +153,7 @@ export default function BridgePage() {
     }
   })
 
-  const userBalance = balance ? formatUnits(balance, 18).substring(0, 10) : '0'
+  const userBalance = balance ? formatUnits(balance as bigint, 18).substring(0, 10) : '0'
 
   // Auto-fill recipient address with current address
   useEffect(() => {
@@ -162,7 +162,7 @@ export default function BridgePage() {
     }
   }, [address, recipient])
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
 

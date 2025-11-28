@@ -1,27 +1,248 @@
 'use client'
 
-import { useAccount } from 'wagmi'
-import { useTokenBalance } from '@/hooks/useTokenBalance'
-import { useFarmData } from '@/hooks/useFarm'
-import { usePoolReserves } from '@/hooks/useLiquidity'
-import { getTokenAddress, getProtocolAddress } from '@/lib/constants'
-import { sepolia } from 'wagmi/chains'
+import { useState, useEffect } from 'react'
+import { useAccount, useReadContract } from 'wagmi'
+import { formatUnits } from 'viem'
+import LineChartEcharts, { transformDataForEcharts, filterDataByDays, generateMockData } from '@/components/charts/LineChartEcharts'
+
+const ERC20_ABI = [
+  {
+    name: 'balanceOf',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'account', type: 'address' }],
+    outputs: [{ name: '', type: 'uint256' }]
+  }
+]
+
+const FARM_ABI = [
+  {
+    name: 'userInfo',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [
+      { name: '', type: 'uint256' },
+      { name: '', type: 'address' }
+    ],
+    outputs: [
+      { name: 'amount', type: 'uint256' },
+      { name: 'rewardDebt', type: 'uint256' }
+    ]
+  },
+  {
+    name: 'pendingReward',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [
+      { name: 'poolId', type: 'uint256' },
+      { name: 'user', type: 'address' }
+    ],
+    outputs: [{ name: '', type: 'uint256' }]
+  }
+]
 
 export default function DashboardPage() {
   const { address, isConnected } = useAccount()
+  const [poolsData, setPoolsData] = useState<any>(null)
+  const [farmData, setFarmData] = useState<any>(null)
+  const [priceData, setPriceData] = useState<any>(null)
+  const [priceDays, setPriceDays] = useState(7)
+  const [apyDays, setApyDays] = useState(30)
 
-  const tkaAddress = getTokenAddress(sepolia.id, 'TKA') as `0x${string}` | undefined
-  const tkbAddress = getTokenAddress(sepolia.id, 'TKB') as `0x${string}` | undefined
-  const usdcAddress = getTokenAddress(sepolia.id, 'USDC') as `0x${string}` | undefined
-  const lpAddress = getProtocolAddress(sepolia.id, 'STAKE_POOL') as `0x${string}` | undefined
+  const swapAddress = process.env.NEXT_PUBLIC_SWAP_ADDRESS as `0x${string}` | undefined
+  const farmAddress = process.env.NEXT_PUBLIC_FARM_ADDRESS as `0x${string}` | undefined
 
-  const { balance: tkaBalance } = useTokenBalance(tkaAddress, address)
-  const { balance: tkbBalance } = useTokenBalance(tkbAddress, address)
-  const { balance: usdcBalance } = useTokenBalance(usdcAddress, address)
-  const { balance: lpBalance } = useTokenBalance(lpAddress, address)
+  // Read token balances
+  const { data: balanceTKA } = useReadContract({
+    address: process.env.NEXT_PUBLIC_TOKEN_A_ADDRESS as `0x${string}`,
+    abi: ERC20_ABI,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: Boolean(address)
+    }
+  })
 
-  const { stakedAmount, pendingRewards } = useFarmData(address)
-  const { reserve0, reserve1 } = usePoolReserves()
+  const { data: balanceTKB } = useReadContract({
+    address: process.env.NEXT_PUBLIC_TOKEN_B_ADDRESS as `0x${string}`,
+    abi: ERC20_ABI,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: Boolean(address)
+    }
+  })
+
+  const { data: balanceUSDC } = useReadContract({
+    address: process.env.NEXT_PUBLIC_PAYMENT_TOKEN_ADDRESS as `0x${string}`,
+    abi: ERC20_ABI,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: Boolean(address)
+    }
+  })
+
+  // Read LP Token balance
+  const { data: lpBalance } = useReadContract({
+    address: swapAddress,
+    abi: ERC20_ABI,
+    functionName: 'balanceOf',
+    args: address ? [address] : undefined,
+    query: {
+      enabled: Boolean(address && swapAddress)
+    }
+  })
+
+  // Read Farm Pool data
+  const { data: farmPool0 } = useReadContract({
+    address: farmAddress,
+    abi: FARM_ABI,
+    functionName: 'userInfo',
+    args: address ? [0n, address] : undefined,
+    query: {
+      enabled: Boolean(address && farmAddress)
+    }
+  })
+
+  const { data: farmPool1 } = useReadContract({
+    address: farmAddress,
+    abi: FARM_ABI,
+    functionName: 'userInfo',
+    args: address ? [1n, address] : undefined,
+    query: {
+      enabled: Boolean(address && farmAddress)
+    }
+  })
+
+  const { data: farmPool2 } = useReadContract({
+    address: farmAddress,
+    abi: FARM_ABI,
+    functionName: 'userInfo',
+    args: address ? [2n, address] : undefined,
+    query: {
+      enabled: Boolean(address && farmAddress)
+    }
+  })
+
+  // Read pending rewards
+  const { data: pendingPool0 } = useReadContract({
+    address: farmAddress,
+    abi: FARM_ABI,
+    functionName: 'pendingReward',
+    args: address ? [0n, address] : undefined,
+    query: {
+      enabled: Boolean(address && farmAddress)
+    }
+  })
+
+  const { data: pendingPool1 } = useReadContract({
+    address: farmAddress,
+    abi: FARM_ABI,
+    functionName: 'pendingReward',
+    args: address ? [1n, address] : undefined,
+    query: {
+      enabled: Boolean(address && farmAddress)
+    }
+  })
+
+  const { data: pendingPool2 } = useReadContract({
+    address: farmAddress,
+    abi: FARM_ABI,
+    functionName: 'pendingReward',
+    args: address ? [2n, address] : undefined,
+    query: {
+      enabled: Boolean(address && farmAddress)
+    }
+  })
+
+  // Calculate totals
+  const tkaBalance = balanceTKA ? formatUnits(balanceTKA, 18) : '0'
+  const tkbBalance = balanceTKB ? formatUnits(balanceTKB, 18) : '0'
+  const usdcBalance = balanceUSDC ? formatUnits(balanceUSDC, 18) : '0'
+  const totalLPHoldings = lpBalance ? formatUnits(lpBalance, 18) : '0'
+
+  const totalStaked = [farmPool0, farmPool1, farmPool2].reduce((sum, pool) => {
+    if (!pool || !Array.isArray(pool)) return sum
+    return sum + Number(formatUnits(pool[0] as bigint, 18))
+  }, 0)
+
+  const totalPendingRewards = [pendingPool0, pendingPool1, pendingPool2].reduce((sum, pending) => {
+    if (!pending) return sum
+    return sum + Number(formatUnits(pending as bigint, 18))
+  }, 0)
+
+  // Fetch API data
+  useEffect(() => {
+    fetch('/api/token/price')
+      .then(res => res.json())
+      .then(data => setPriceData(data))
+      .catch(console.error)
+
+    fetch('/api/stake/pools')
+      .then(res => res.json())
+      .then(data => setPoolsData(data))
+      .catch(console.error)
+
+    fetch('/api/farm/stats')
+      .then(res => res.json())
+      .then(data => setFarmData(data))
+      .catch(console.error)
+  }, [])
+
+  const priceChartData = priceData?.series
+    ? filterDataByDays(
+        transformDataForEcharts(priceData.series, 'ts', 'price'),
+        priceDays
+      )
+    : generateMockData(priceDays, 1.5, 0.2)
+
+  const tvlChartData = poolsData?.pools?.[0]?.history && Array.isArray(poolsData.pools[0].history) && poolsData.pools[0].history.length > 0
+    ? [{
+        name: 'Total TVL',
+        data: transformDataForEcharts(
+          poolsData.pools[0].history,
+          'ts',
+          'tvl'
+        )
+      }]
+    : [{ name: 'Total TVL', data: generateMockData(30, 1000000, 50000) }]
+
+  const apyChartSeries = farmData?.apyHistory
+    ? [
+        {
+          name: 'Pool 0',
+          data: filterDataByDays(
+            farmData.apyHistory
+              .filter((item: any) => item.poolId === 0)
+              .map((item: any) => [item.ts, item.apy]),
+            apyDays
+          )
+        },
+        {
+          name: 'Pool 1',
+          data: filterDataByDays(
+            farmData.apyHistory
+              .filter((item: any) => item.poolId === 1)
+              .map((item: any) => [item.ts, item.apy]),
+            apyDays
+          )
+        },
+        {
+          name: 'Pool 2',
+          data: filterDataByDays(
+            farmData.apyHistory
+              .filter((item: any) => item.poolId === 2)
+              .map((item: any) => [item.ts, item.apy]),
+            apyDays
+          )
+        }
+      ]
+    : [
+        { name: 'Pool 0', data: generateMockData(apyDays, 45, 5) },
+        { name: 'Pool 1', data: generateMockData(apyDays, 35, 4) },
+        { name: 'Pool 2', data: generateMockData(apyDays, 55, 6) }
+      ]
 
   const assets = [
     { symbol: 'TKA', name: 'Token A', balance: tkaBalance, value: `$${(parseFloat(tkaBalance) * 1.2).toFixed(2)}`, change: '+3.2%', changePositive: true },
@@ -32,8 +253,8 @@ export default function DashboardPage() {
   const liquidityPositions = [
     { 
       pair: 'TKA/TKB', 
-      value: `$${(parseFloat(lpBalance) * 10).toFixed(2)}`, 
-      share: lpBalance ? ((parseFloat(lpBalance) / (parseFloat(reserve0) + parseFloat(reserve1))) * 100).toFixed(3) + '%' : '0.000%', 
+      value: `$${(parseFloat(totalLPHoldings) * 10).toFixed(2)}`, 
+      share: '0.000%', 
       earned: '$45.67' 
     },
   ]
@@ -41,23 +262,23 @@ export default function DashboardPage() {
   const stakingPositions = [
     { 
       pool: 'TKA/TKB LP', 
-      staked: `${parseFloat(stakedAmount).toFixed(4)} LP`, 
-      value: `$${(parseFloat(stakedAmount) * 10).toFixed(2)}`, 
+      staked: `${totalStaked.toFixed(4)} LP`, 
+      value: `$${(totalStaked * 10).toFixed(2)}`, 
       apr: '45.6%', 
-      earned: `${parseFloat(pendingRewards).toFixed(4)} DRT` 
+      earned: `${totalPendingRewards.toFixed(4)} DRT` 
     },
   ]
 
   const transactions = [
     { type: 'Swap', description: 'Swapped 1.5 TKA for 1.2 TKB', time: '2 hours ago', status: 'success' },
     { type: 'Add Liquidity', description: 'Added TKA/TKB liquidity', time: '5 hours ago', status: 'success' },
-    { type: 'Stake', description: `Staked ${parseFloat(stakedAmount).toFixed(2)} TKA/TKB LP`, time: '1 day ago', status: 'success' },
-    { type: 'Harvest', description: `Harvested ${parseFloat(pendingRewards).toFixed(2)} DRT tokens`, time: '2 days ago', status: 'success' },
+    { type: 'Stake', description: `Staked ${totalStaked.toFixed(2)} TKA/TKB LP`, time: '1 day ago', status: 'success' },
+    { type: 'Harvest', description: `Harvested ${totalPendingRewards.toFixed(2)} DRT tokens`, time: '2 days ago', status: 'success' },
   ]
 
   const totalBalance = assets.reduce((sum, asset) => sum + parseFloat(asset.value.slice(1)), 0)
-  const totalStakedValue = parseFloat(stakedAmount) * 10
-  const totalEarned = parseFloat(pendingRewards)
+  const totalStakedValue = totalStaked * 10
+  const totalEarned = totalPendingRewards
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4">
@@ -82,7 +303,7 @@ export default function DashboardPage() {
 
               <div className="bg-white rounded-xl p-6 border border-gray-200">
                 <div className="text-gray-600 text-sm mb-2">Liquidity Value</div>
-                <div className="text-3xl font-bold text-gray-900 mb-1">${(parseFloat(lpBalance) * 10).toFixed(2)}</div>
+                <div className="text-3xl font-bold text-gray-900 mb-1">${(parseFloat(totalLPHoldings) * 10).toFixed(2)}</div>
                 <div className="text-blue-600 text-xs font-semibold">Active Pools</div>
               </div>
 
@@ -133,6 +354,41 @@ export default function DashboardPage() {
                 </div>
 
                 <div className="bg-white rounded-xl p-6 border border-gray-200">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-bold text-gray-900">Token Price</h2>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setPriceDays(7)}
+                        className={`px-3 py-1 text-sm rounded-lg transition-colors ${
+                          priceDays === 7
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        7天
+                      </button>
+                      <button
+                        onClick={() => setPriceDays(30)}
+                        className={`px-3 py-1 text-sm rounded-lg transition-colors ${
+                          priceDays === 30
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        30天
+                      </button>
+                    </div>
+                  </div>
+                  <LineChartEcharts
+                    series={[{ name: 'Price', data: priceChartData }]}
+                    height={300}
+                    yAxisFormatter="${value}"
+                    areaStyle={true}
+                    smooth={true}
+                  />
+                </div>
+
+                <div className="bg-white rounded-xl p-6 border border-gray-200">
                   <h2 className="text-2xl font-bold text-gray-900 mb-6">Liquidity Positions</h2>
                   <div className="space-y-3">
                     {liquidityPositions.map((position, index) => (
@@ -146,12 +402,12 @@ export default function DashboardPage() {
                         </div>
                         <div className="flex justify-between text-sm">
                           <span className="text-gray-600">Pool Share: {position.share}</span>
-                          <span className="text-green-600 font-semibold">LP: {parseFloat(lpBalance).toFixed(4)}</span>
+                          <span className="text-green-600 font-semibold">LP: {parseFloat(totalLPHoldings).toFixed(4)}</span>
                         </div>
                       </div>
                     ))}
                   </div>
-                  {parseFloat(lpBalance) === 0 && (
+                  {parseFloat(totalLPHoldings) === 0 && (
                     <div className="text-center text-gray-500 text-sm py-4">
                       No liquidity positions found. Add liquidity to start earning fees.
                     </div>
@@ -182,11 +438,46 @@ export default function DashboardPage() {
                       </div>
                     ))}
                   </div>
-                  {parseFloat(stakedAmount) === 0 && (
+                  {totalStaked === 0 && (
                     <div className="text-center text-gray-500 text-sm py-4">
                       No staking positions found. Stake LP tokens to start earning rewards.
                     </div>
                   )}
+                </div>
+
+                <div className="bg-white rounded-xl p-6 border border-gray-200">
+                  <div className="flex justify-between items-center mb-4">
+                    <h2 className="text-2xl font-bold text-gray-900">Farm APY History</h2>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setApyDays(7)}
+                        className={`px-3 py-1 text-sm rounded-lg transition-colors ${
+                          apyDays === 7
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        7天
+                      </button>
+                      <button
+                        onClick={() => setApyDays(30)}
+                        className={`px-3 py-1 text-sm rounded-lg transition-colors ${
+                          apyDays === 30
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        30天
+                      </button>
+                    </div>
+                  </div>
+                  <LineChartEcharts
+                    series={apyChartSeries}
+                    height={350}
+                    yAxisFormatter="{value}%"
+                    areaStyle={false}
+                    smooth={true}
+                  />
                 </div>
               </div>
 

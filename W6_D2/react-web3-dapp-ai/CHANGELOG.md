@@ -2,6 +2,89 @@
 
 All notable changes to react-web3-dapp-ai project will be documented in this file.
 
+## [v1.5.3] - 2025-11-28
+
+### Added
+
+#### 📊 Dashboard Chart Visualizations
+- **ECharts Integration**
+  - Installed echarts package for data visualization
+  - Created LineChartEcharts component in components/charts/
+  - TypeScript support with proper type definitions
+  - Client-side rendering with SSR compatibility
+  - Responsive charts with automatic resize handling
+
+- **Token Price Chart**
+  - Interactive line chart showing token price history
+  - Time range toggle: 7天 / 30天 buttons
+  - Area chart style with gradient fill
+  - Mock data fallback when API data unavailable
+  - Dollar-formatted Y-axis labels
+
+- **Total Value Locked (TVL) Chart**
+  - Visual representation of liquidity pool TVL over time
+  - Area chart with smooth curves
+  - Automatic data transformation from pool history
+  - Mock data generation for testing
+
+- **Farm APY History Chart**
+  - Multi-series chart showing APY for all 3 pools
+  - Individual color-coded lines for Pool 0, 1, 2
+  - Time range selection: 7天 / 30天
+  - Percentage-formatted Y-axis
+  - Legend for easy pool identification
+
+- **Chart Utility Functions**
+  - `transformDataForEcharts`: Converts API data to chart format
+  - `filterDataByDays`: Filters data by time range (7/30 days)
+  - `generateMockData`: Creates realistic mock data for testing
+  - Reusable across all chart implementations
+
+### Changed
+
+#### 🎯 Dashboard Logic Alignment with web3-dapp
+- **Contract Reading Improvements**
+  - Replaced custom hooks (useTokenBalance, useFarmData, useLiquidity) with direct useReadContract calls
+  - Added inline ERC20_ABI and FARM_ABI definitions for self-contained implementation
+  - Changed from helper functions to direct environment variable access for contract addresses
+  - Implemented multi-pool farm reading (Pool 0, 1, 2) with individual userInfo and pendingReward calls
+  
+- **Data Structure Updates**
+  - Added totalLPHoldings calculation from LP token balance
+  - Implemented totalStaked calculation across all three farm pools
+  - Added totalPendingRewards aggregation from all pools
+  - Integrated API data fetching for pools (/api/stake/pools) and farm stats (/api/farm/stats)
+  - Replaced hook-based balance reading with direct contract queries
+
+- **Code Consistency**
+  - Aligned with web3-dapp reference implementation for consistent data handling
+  - Maintained all existing UI/UX styling and component structure unchanged
+  - Used formatUnits from viem for proper balance formatting
+  - Implemented query.enabled pattern for conditional contract reading
+  - Added TypeScript type casting with `as \`0x${string}\`` pattern
+
+- **Variable Updates**
+  - Changed from `balance` to `tkaBalance`, `tkbBalance`, `usdcBalance`
+  - Updated LP balance references to use `totalLPHoldings`
+  - Replaced `stakedAmount` with `totalStaked` across all components
+  - Changed `pendingRewards` to `totalPendingRewards` throughout
+
+### Technical
+
+#### 🔧 Dashboard Implementation Details
+- **Direct Contract Integration**
+  - Removed dependencies on custom hooks for more transparent data flow
+  - Used useReadContract with proper args and query.enabled conditions
+  - Farm data reading: userInfo returns [amount, rewardDebt] array
+  - Pending rewards reading: pendingReward returns bigint value
+  - Proper handling of BigInt to number conversion with formatUnits
+
+- **Multi-Pool Architecture**
+  - Support for 3 farm pools (Pool 0, 1, 2) with individual queries
+  - Aggregated calculations for total staked and total pending rewards
+  - Array.reduce pattern for summing values across pools
+  - Null safety checks for pool data before processing
+
 ## [v1.5.2] - 2025-11-28
 
 ### Changed
