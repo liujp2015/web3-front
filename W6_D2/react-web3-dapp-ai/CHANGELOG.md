@@ -2,6 +2,54 @@
 
 All notable changes to react-web3-dapp-ai project will be documented in this file.
 
+## [v1.5.1] - 2025-11-28
+
+### Fixed
+
+#### 🐛 Bridge Page Logic Alignment
+- **Token Configuration Updates**
+  - Aligned bridge page logic with web3-dapp reference implementation
+  - Updated `SUPPORTED_TOKENS` to include address from environment variables
+  - Changed from using `getTokenAddress(chainId, token)` to direct env var access
+  - Token addresses now sourced from `NEXT_PUBLIC_TOKEN_A_ADDRESS`, `NEXT_PUBLIC_TOKEN_B_ADDRESS`, `NEXT_PUBLIC_REWARD_TOKEN_ADDRESS`
+
+- **Balance Reading Improvements**
+  - Replaced `getTokenAddress()` helper with direct `tokenData` lookup
+  - Updated balance formatting from `slice(0, 8)` to `substring(0, 10)` for consistency
+  - Removed unnecessary `chainId` dependency from balance reading logic
+  - Simplified token address resolution flow
+
+- **Code Cleanup**
+  - Removed unused imports: `parseUnits`, `getTokenAddress`, `useChainId`
+  - Eliminated unnecessary complexity in token address handling
+  - Maintained all existing UI/UX styling unchanged
+  - Improved code maintainability and consistency with reference implementation
+
+#### 🔤 Font Configuration Fix
+- **Next.js 16 Compatibility**
+  - Fixed Geist font import errors in `layout.tsx`
+  - Replaced `Geist` and `Geist_Mono` fonts with stable `Inter` font
+  - Resolved "Import trace" errors related to Google Fonts loading
+  - Updated font variable from `--font-geist-sans` to `--font-inter`
+  - Ensured compatibility with Next.js 16.0.4
+
+#### 📅 LaunchPad Timeline Display
+- **Date Formatting Fix**
+  - Fixed Project Timeline display showing raw timestamp values
+  - Implemented proper date formatting using `toLocaleDateString()`
+  - Display format: "Nov 29, 2025 at 02:30 PM" (Month Day, Year at Time)
+  - Enhanced user readability in investment modal timeline section
+  - Includes year, month, day, hour, and minute information
+
+### Technical
+
+#### 🔧 Logic Consistency Improvements
+- **Reference Alignment**
+  - Bridge page logic now matches web3-dapp implementation exactly
+  - Consistent token address sourcing across both implementations
+  - Standardized balance reading patterns
+  - Maintained UI independence while aligning core logic
+
 ## [v1.5.0] - 2025-11-28
 
 ### Added
