@@ -382,6 +382,61 @@ export default function SwapPage() {
             </div>
           )}
         </div>
+
+        {/* Information Section */}
+        <div className="mt-8 bg-white/80 backdrop-blur-lg rounded-2xl p-6 shadow-lg border border-gray-200">
+          <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+            <span className="text-2xl">ℹ️</span>
+            How Token Swapping Works
+          </h3>
+          
+          <div className="space-y-4">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-100">
+              <h4 className="font-semibold text-gray-900 mb-2">1. Select Your Tokens</h4>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Choose the token you want to swap from (input token) and the token you want to receive (output token). 
+                You can easily switch between tokens using the swap button.
+              </p>
+            </div>
+            
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 border border-green-100">
+              <h4 className="font-semibold text-gray-900 mb-2">2. Get Instant Quotes</h4>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Enter the amount you want to swap and get real-time price quotes from our liquidity pools. 
+                The system automatically calculates the best exchange rate available.
+              </p>
+            </div>
+            
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-100">
+              <h4 className="font-semibold text-gray-900 mb-2">3. Approve Token Spending</h4>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                For security, you need to approve the swap contract to spend your tokens. 
+                This is a one-time authorization per token that ensures your assets remain secure.
+              </p>
+            </div>
+            
+            <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg p-4 border border-orange-100">
+              <h4 className="font-semibold text-gray-900 mb-2">4. Execute the Swap</h4>
+              <p className="text-sm text-gray-600 leading-relaxed">
+                Confirm your transaction and the tokens will be automatically swapped in your wallet. 
+                You can track the progress and view your transaction on Etherscan.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 p-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-lg border border-gray-200">
+            <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+              <span className="text-lg">💡</span>
+              Tips for Better Trading
+            </h4>
+            <ul className="text-sm text-gray-600 space-y-1 pl-6">
+              <li className="list-disc">Monitor price impact - higher impacts may result in less favorable rates</li>
+              <li className="list-disc">Adjust slippage tolerance based on market conditions</li>
+              <li className="list-disc">Check liquidity levels before making large trades</li>
+              <li className="list-disc">Use the MAX button to quickly input your entire balance</li>
+            </ul>
+          </div>
+        </div>
       </div>
 
       {/* Slippage Settings Modal */}

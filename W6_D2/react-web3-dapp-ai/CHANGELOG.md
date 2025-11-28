@@ -2,6 +2,69 @@
 
 All notable changes to react-web3-dapp-ai project will be documented in this file.
 
+## [v1.5.0] - 2025-11-28
+
+### Added
+
+#### 📊 LaunchPad Statistics Dashboard
+- **Project Statistics Section**
+  - Added comprehensive statistics panel showing key metrics at a glance
+  - Four statistical cards displaying:
+    - Total Projects: Dynamic count of all available projects
+    - Active Projects: Count of currently running campaigns  
+    - Completed Projects: Count of finished campaigns
+    - Total Raised: Aggregate funding amount across all projects with smart formatting
+  - Responsive grid layout: 2-column on mobile, 4-column on desktop
+  - Modern gradient design with glassmorphism effects matching overall theme
+  - Real-time calculations based on actual project data
+
+#### 📚 Swap Page Educational Content
+- **Comprehensive How-to Guide Section**
+  - Added detailed "How Token Swapping Works" information panel
+  - Step-by-step process explanation with visual card layout:
+    - Token Selection: Guide for choosing input/output tokens
+    - Instant Quotes: Real-time pricing and rate calculation explanation
+    - Token Approval: Security-focused approval process walkthrough
+    - Swap Execution: Transaction confirmation and tracking guidance
+  - Enhanced educational content with color-coded sections for better visual hierarchy
+  - Professional tips section with best practices for trading:
+    - Price impact monitoring guidelines
+    - Slippage tolerance recommendations
+    - Liquidity level checking advice
+    - MAX button usage tips
+
+### Enhanced
+
+#### 🎨 User Experience Improvements
+- **Educational Content Integration**
+  - Seamlessly integrated informational content without disrupting core functionality
+  - Maintained responsive design consistency across new sections
+  - Enhanced glassmorphism design with backdrop-blur effects
+  - Consistent typography and spacing with existing design system
+
+#### 📱 Mobile Optimization
+- **Statistics Panel Responsive Design**
+  - Optimized statistics cards for mobile viewing
+  - Adaptive text sizing: text-xs/lg:text-sm for labels, text-2xl/lg:text-3xl for values
+  - Smart grid layout transitions for different screen sizes
+  - Touch-friendly spacing and visual hierarchy
+
+### Technical
+
+#### 🔧 Data Processing Enhancements
+- **Dynamic Statistics Calculation**
+  - Real-time aggregation of project data for statistics display
+  - Efficient filtering algorithms for status-based counting
+  - Smart amount formatting using existing `formatAmountInMillions()` function
+  - Type-safe calculations with proper TypeScript annotations
+
+#### 🏗️ Component Architecture
+- **Maintainable Code Structure**
+  - Modular approach to new feature integration
+  - Consistent styling patterns with existing codebase
+  - Reusable utility functions for data formatting and display
+  - Performance-optimized rendering with proper dependency management
+
 ## [v1.4.2] - 2025-11-28
 
 ### Enhanced

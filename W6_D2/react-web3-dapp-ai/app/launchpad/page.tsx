@@ -130,6 +130,37 @@ export default function LaunchPadPage() {
           </p>
         </div>
 
+        {/* Project Statistics */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6 lg:mb-8">
+          <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-xl p-4 lg:p-6 text-white">
+            <div className="text-xs lg:text-sm opacity-90 mb-1 font-medium">Total Projects</div>
+            <div className="text-2xl lg:text-3xl font-bold">{mockProjects.length}</div>
+          </div>
+
+          <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-2xl shadow-xl p-4 lg:p-6 text-white">
+            <div className="text-xs lg:text-sm opacity-90 mb-1 font-medium">Active</div>
+            <div className="text-2xl lg:text-3xl font-bold">
+              {mockProjects.filter((p: any) => p.status === 'active').length}
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl shadow-xl p-4 lg:p-6 text-white">
+            <div className="text-xs lg:text-sm opacity-90 mb-1 font-medium">Completed</div>
+            <div className="text-2xl lg:text-3xl font-bold">
+              {mockProjects.filter((p: any) => p.status === 'completed').length}
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl shadow-xl p-4 lg:p-6 text-white">
+            <div className="text-xs lg:text-sm opacity-90 mb-1 font-medium">Total Raised</div>
+            <div className="text-lg lg:text-2xl font-bold">
+              {formatAmountInMillions(
+                mockProjects.reduce((sum: number, p: any) => sum + parseFloat(p.raised || '0'), 0)
+              )}
+            </div>
+          </div>
+        </div>
+
         {/* Action Bar */}
         <div className="bg-white/70 backdrop-blur-lg rounded-3xl shadow-xl p-4 lg:p-6 mb-6 lg:mb-8 border border-white/20">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -410,13 +441,25 @@ export default function LaunchPadPage() {
                   <div className="flex justify-between items-center p-3 bg-white/50 rounded-lg">
                     <span className="text-gray-600 font-medium">Start Date:</span>
                     <span className="text-gray-900 font-semibold">
-                      {selectedProject.startTime}
+                      {new Date(selectedProject.startTime).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
                     </span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-white/50 rounded-lg">
                     <span className="text-gray-600 font-medium">End Date:</span>
                     <span className="text-gray-900 font-semibold">
-                      {selectedProject.endTime}
+                      {new Date(selectedProject.endTime).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
                     </span>
                   </div>
                   <div className="flex justify-between items-center p-3 bg-white/50 rounded-lg">
