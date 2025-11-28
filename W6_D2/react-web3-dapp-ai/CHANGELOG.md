@@ -2,6 +2,70 @@
 
 All notable changes to react-web3-dapp-ai project will be documented in this file.
 
+## [v1.5.2] - 2025-11-28
+
+### Changed
+
+#### 🎨 Swap Page UI Overhaul
+- **Balance Display Removal**
+  - Removed balance information from token input/output sections
+  - Removed `balanceIn` and `balanceOut` reading logic
+  - Removed `handleMaxBalance` function and MAX button
+  - Removed balance display UI from both From and To sections
+  - Cleaned up `refetchBalance` calls in `switchTokens` function
+  - Simplified swap interface for cleaner, more focused UX
+
+- **Enhanced Visual Design**
+  - **From Section:** Gray gradient background (from-gray-50 to-gray-100)
+  - **To Section:** Blue gradient background (from-blue-50 to-indigo-50)
+  - Increased input font size to 3xl for better visibility
+  - Token selector moved to right side with improved styling
+  - Added hover effects with border color transitions
+  - Enhanced padding and spacing throughout
+
+- **Swap Button Animation**
+  - Added scale and rotate-180 animations on hover
+  - Enhanced shadow effects (shadow-md → shadow-lg on hover)
+  - Blue color scheme for visual appeal
+  - Improved border styling with 4px width
+  - Smooth 300ms transition duration
+
+- **Custom Select Styling**
+  - Added custom dropdown arrow icons
+  - Used `appearance-none` to hide default browser arrow
+  - Added `pr-10` padding for custom arrow placement
+  - Custom chevron-down SVG icon for better UX
+  - Proper `pointer-events-none` on arrow icon
+
+### Fixed
+
+#### 🐛 Swap Page Layout Issues
+- **Select Dropdown Positioning**
+  - Fixed select dropdowns overflowing outside card boundaries
+  - Removed problematic `overflow-visible` classes
+  - Added `flex-shrink-0` to select containers to prevent compression
+  - Added `min-w-0` to input and amount display for proper text truncation
+  - Ensured consistent layout between From and To sections
+  - Select dropdowns now properly aligned on the right side
+
+- **Flexbox Layout Improvements**
+  - Proper flex container management for responsive behavior
+  - Consistent spacing and alignment across all screen sizes
+  - Prevented select elements from being squeezed or misaligned
+
+### Enhanced
+
+#### ✨ Overall Polish
+- **Visual Hierarchy**
+  - Consistent rounded-2xl borders for modern aesthetic
+  - Better visual distinction between input and output sections
+  - Gradient backgrounds improve readability and focus
+
+- **Interactive Feedback**
+  - Rich hover and focus effects throughout
+  - Animated state transitions for better user experience
+  - Professional appearance with attention to detail
+
 ## [v1.5.1] - 2025-11-28
 
 ### Fixed
