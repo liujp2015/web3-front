@@ -2,6 +2,54 @@
 
 All notable changes to react-web3-dapp-ai project will be documented in this file.
 
+## [v1.3.0] - 2025-11-28
+
+### Added
+
+#### 🪙 Dedicated Token Mint Page
+- **New Mint Page (/mint)**
+  - Created dedicated page for minting test tokens (USDC, TKA, TKB)
+  - Modern card-based design with individual sections for each token
+  - Real-time balance display and transaction status updates
+  - Interactive mint controls with MAX button functionality
+  - Support for minting up to 1,000 tokens per transaction
+  - Success notifications with Etherscan transaction links
+  - Responsive design optimized for mobile and desktop
+
+#### 🚀 LaunchPad Page Redesign
+- **Complete UI/UX Overhaul**
+  - Moved mint functionality to dedicated mint page for better UX separation
+  - Modern gradient background themes (indigo-purple-pink)
+  - Glassmorphism design with backdrop blur effects
+  - Enhanced project cards with improved visual hierarchy
+  - Animated progress bars and hover effects
+  - Better project stats layout with colored category sections
+  - Improved modal design for project details
+
+#### 🎨 Visual Enhancements
+- **Enhanced Design System**
+  - Consistent gradient themes across components
+  - Improved color palette with better contrast
+  - Modern rounded corners and shadow effects
+  - Enhanced typography with gradient text effects
+  - Smooth animations and transitions
+  - Better spacing and layout consistency
+
+### Changed
+
+#### 📋 Navigation Updates
+- **Header Navigation**
+  - Added "Mint" link to main navigation menu
+  - Improved navigation order for better user flow
+  - Enhanced link styling for better visual hierarchy
+
+#### 🔧 LaunchPad Improvements
+- **Functionality Separation**
+  - Removed mint modals from launchpad page
+  - Simplified action bar with "Mint Tokens" and "Create Project" buttons
+  - Cleaner balance display showing only USDC balance
+  - Better focus on core launchpad functionality (discovering and investing in projects)
+
 ## [v1.2.0] - 2025-01-27
 
 ### Fixed
