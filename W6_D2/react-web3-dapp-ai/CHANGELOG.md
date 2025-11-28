@@ -21,12 +21,6 @@ All notable changes to react-web3-dapp-ai project will be documented in this fil
   - Mock data fallback when API data unavailable
   - Dollar-formatted Y-axis labels
 
-- **Total Value Locked (TVL) Chart**
-  - Visual representation of liquidity pool TVL over time
-  - Area chart with smooth curves
-  - Automatic data transformation from pool history
-  - Mock data generation for testing
-
 - **Farm APY History Chart**
   - Multi-series chart showing APY for all 3 pools
   - Individual color-coded lines for Pool 0, 1, 2
