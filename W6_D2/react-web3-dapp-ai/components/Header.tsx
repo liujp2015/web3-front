@@ -113,13 +113,13 @@ export default function Header() {
               : 'max-h-0 opacity-0 invisible overflow-hidden'
           }`}
         >
-          <div className="pb-4 pt-2 space-y-1 bg-white border-t border-gray-200 shadow-lg">
+          <div className="pb-4 pt-2 space-y-1 bg-white/80 backdrop-blur-md border-t border-gray-200/50 shadow-lg">
             {navigation.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 onClick={closeMobileMenu}
-                className="block px-4 py-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 transition-colors font-medium rounded-md mx-2"
+                className="block px-4 py-3 text-gray-700 hover:text-blue-600 hover:bg-white/60 transition-colors font-medium rounded-md mx-2"
               >
                 {item.name}
               </Link>
@@ -134,7 +134,7 @@ export default function Header() {
       {/* Mobile menu overlay - for closing menu when clicking outside */}
       {isMobileMenuOpen && (
         <div
-          className="lg:hidden fixed inset-0 z-40 bg-black bg-opacity-25"
+          className="lg:hidden fixed inset-0 z-40 bg-black/10"
           onClick={closeMobileMenu}
           aria-hidden="true"
         />
