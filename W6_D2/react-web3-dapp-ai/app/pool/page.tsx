@@ -126,7 +126,7 @@ export default function PoolPage() {
       return
     }
 
-    if (reserves && Array.isArray(reserves) && reserves[0] > 0n && reserves[1] > 0n) {
+    if (reserves && Array.isArray(reserves) && reserves[0] > BigInt(0) && reserves[1] > BigInt(0)) {
       // Use actual reserves ratio
       const reserveA = Number(reserves[0]) / 1e18
       const reserveB = Number(reserves[1]) / 1e18
@@ -380,14 +380,14 @@ export default function PoolPage() {
               <ApproveButton
                 tokenAddress={tokenAAddress}
                 spenderAddress={swapAddress}
-                amount={amountA ? parseUnits(amountA, 18) : 0n}
+                amount={amountA ? parseUnits(amountA, 18) : BigInt(0)}
                 tokenSymbol="TKA"
                 disabled={!amountA || !amountB || isAdding || isAddConfirming}
               >
                 <ApproveButton
                   tokenAddress={tokenBAddress}
                   spenderAddress={swapAddress}
-                  amount={amountB ? parseUnits(amountB, 18) : 0n}
+                  amount={amountB ? parseUnits(amountB, 18) : BigInt(0)}
                   tokenSymbol="TKB"
                   disabled={!amountA || !amountB || isAdding || isAddConfirming}
                 >

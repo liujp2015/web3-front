@@ -330,7 +330,7 @@ export default function SwapPage() {
             <ApproveButton
               tokenAddress={tokenInData?.address}
               spenderAddress={swapAddress}
-              amount={amountIn ? parseUnits(amountIn, tokenInData.decimals) : 0n}
+              amount={amountIn ? parseUnits(amountIn, tokenInData.decimals) : BigInt(0)}
               tokenSymbol={tokenInData?.symbol}
               onApproved={handleApproved}
               disabled={!amountIn || !amountOut || isSwapping || isConfirming}

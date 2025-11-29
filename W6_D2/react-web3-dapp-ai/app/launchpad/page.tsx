@@ -35,7 +35,7 @@ export default function LaunchPadPage() {
   })
 
   const userPurchased = userPurchase && Array.isArray(userPurchase) ? formatUnits(userPurchase[0] as bigint, 18) : '0'
-  const userClaimed = userPurchase && Array.isArray(userPurchase) ? (userPurchase[1] as bigint) > 0n : false
+  const userClaimed = userPurchase && Array.isArray(userPurchase) ? (userPurchase[1] as bigint) > BigInt(0) : false
 
   const {
     investInProject,

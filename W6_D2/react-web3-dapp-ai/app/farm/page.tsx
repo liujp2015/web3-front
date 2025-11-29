@@ -254,7 +254,7 @@ function FarmPoolCard({ pool, farmAddress, userAddress, isMockMode, chainId }: {
           <ApproveButton
             tokenAddress={pool.lpTokenAddress}
             spenderAddress={farmAddress}
-            amount={amount ? parseUnits(amount, 18) : 0n}
+            amount={amount ? parseUnits(amount, 18) : BigInt(0)}
             tokenSymbol="LP"
             disabled={!amount || isDepositing || isDepositConfirming}
           >
