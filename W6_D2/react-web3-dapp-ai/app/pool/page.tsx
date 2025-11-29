@@ -54,7 +54,8 @@ export default function PoolPage() {
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
     query: {
-      enabled: Boolean(tokenAAddress && address)
+      enabled: Boolean(tokenAAddress && address),
+      refetchInterval: 10000 // Auto-refetch every 10 seconds
     }
   })
 
@@ -64,7 +65,8 @@ export default function PoolPage() {
     functionName: 'balanceOf',
     args: address ? [address] : undefined,
     query: {
-      enabled: Boolean(tokenBAddress && address)
+      enabled: Boolean(tokenBAddress && address),
+      refetchInterval: 10000 // Auto-refetch every 10 seconds
     }
   })
 
@@ -110,6 +112,19 @@ export default function PoolPage() {
       }, 1000)
     }
   }, [isAddSuccess, refetchTKA, refetchTKB])
+
+  // Refresh balances when page becomes visible (e.g., after swap on another page)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && address) {
+        refetchTKA()
+        refetchTKB()
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [address, refetchTKA, refetchTKB])
 
   // Check if mock mode
   useEffect(() => {
