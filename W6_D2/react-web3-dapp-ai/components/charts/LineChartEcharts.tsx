@@ -38,7 +38,7 @@ export default function LineChartEcharts({
   useEffect(() => {
     setIsClient(true)
 
-    import('echarts').then(module => {
+    import('echarts').then((module: any) => {
       setEcharts(module.default || module)
     })
 

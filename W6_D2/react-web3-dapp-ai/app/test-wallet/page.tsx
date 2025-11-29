@@ -41,7 +41,7 @@ export default function TestWalletPage() {
           <div>
             <div className="text-gray-600 text-sm mb-2 font-semibold">Balance</div>
             <div className="text-gray-900 text-lg bg-gray-50 p-3 rounded-lg">
-              {balance ? `${parseFloat(balance.formatted).toFixed(4)} ${balance.symbol}` : 'Loading...'}
+              {balance ? `${parseFloat((balance.value / BigInt(10 ** balance.decimals)).toString()).toFixed(4)} ${balance.symbol}` : 'Loading...'}
             </div>
           </div>
 

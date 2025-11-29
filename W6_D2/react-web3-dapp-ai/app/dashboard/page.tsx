@@ -157,17 +157,17 @@ export default function DashboardPage() {
   })
 
   // Calculate totals
-  const tkaBalance = balanceTKA ? formatUnits(balanceTKA, 18) : '0'
-  const tkbBalance = balanceTKB ? formatUnits(balanceTKB, 18) : '0'
-  const usdcBalance = balanceUSDC ? formatUnits(balanceUSDC, 18) : '0'
-  const totalLPHoldings = lpBalance ? formatUnits(lpBalance, 18) : '0'
+  const tkaBalance = balanceTKA ? formatUnits(balanceTKA as bigint, 18) : '0'
+  const tkbBalance = balanceTKB ? formatUnits(balanceTKB as bigint, 18) : '0'
+  const usdcBalance = balanceUSDC ? formatUnits(balanceUSDC as bigint, 18) : '0'
+  const totalLPHoldings = lpBalance ? formatUnits(lpBalance as bigint, 18) : '0'
 
-  const totalStaked = [farmPool0, farmPool1, farmPool2].reduce((sum, pool) => {
+  const totalStaked = [farmPool0, farmPool1, farmPool2].reduce((sum: number, pool) => {
     if (!pool || !Array.isArray(pool)) return sum
     return sum + Number(formatUnits(pool[0] as bigint, 18))
   }, 0)
 
-  const totalPendingRewards = [pendingPool0, pendingPool1, pendingPool2].reduce((sum, pending) => {
+  const totalPendingRewards = [pendingPool0, pendingPool1, pendingPool2].reduce((sum: number, pending) => {
     if (!pending) return sum
     return sum + Number(formatUnits(pending as bigint, 18))
   }, 0)

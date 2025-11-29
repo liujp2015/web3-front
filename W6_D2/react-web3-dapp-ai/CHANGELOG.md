@@ -4,6 +4,30 @@ All notable changes to react-web3-dapp-ai project will be documented in this fil
 
 ## [v1.5.3] - 2025-11-28
 
+### Fixed
+
+#### 🔧 TypeScript Build Errors for Vercel Deployment
+- **BigInt Literal Compatibility**
+  - Changed `0n` to `BigInt(0)` in launchpad projects route
+  - Fixed ES2020 target compatibility for production build
+  
+- **Type Annotations Added**
+  - Added explicit types to bridge page state variables
+  - Fixed implicit 'any' type errors in dashboard reduce functions
+  - Added type annotations to farm page component props and functions
+  - Fixed test-wallet page balance property access
+  - Fixed ECharts dynamic import type issue
+  
+- **Type Casting Improvements**
+  - Added `as bigint` casting for formatUnits calls
+  - Added explicit type annotations for event handlers
+  - Fixed array reduce function parameter types
+  
+- **Build Verification**
+  - Successfully passes `npm run build` for Vercel deployment
+  - All TypeScript strict mode checks pass
+  - Production build optimization complete
+
 ### Added
 
 #### 🧪 Test Wallet Page

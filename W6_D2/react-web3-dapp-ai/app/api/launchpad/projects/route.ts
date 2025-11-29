@@ -82,7 +82,7 @@ async function fetchChainProjects() {
       functionName: 'getSaleCount'
     })
 
-    if (saleCount === 0n) {
+    if (saleCount === BigInt(0)) {
       return null
     }
 

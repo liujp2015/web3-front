@@ -9,7 +9,7 @@ import { getProtocolAddress } from '@/lib/constants'
 import { FARM_ABI, ERC20_ABI } from '@/lib/abis'
 
 // Farm pool component for each individual pool
-function FarmPoolCard({ pool, farmAddress, userAddress, isMockMode, chainId }) {
+function FarmPoolCard({ pool, farmAddress, userAddress, isMockMode, chainId }: { pool: any, farmAddress: `0x${string}`, userAddress: `0x${string}` | undefined, isMockMode: boolean, chainId: number }) {
   const [amount, setAmount] = useState('')
   const [activeTab, setActiveTab] = useState('deposit') // 'deposit' or 'withdraw'
 
@@ -64,9 +64,9 @@ function FarmPoolCard({ pool, farmAddress, userAddress, isMockMode, chainId }) {
     hash: harvestHash
   })
 
-  const userStaked = userInfo ? formatUnits(userInfo[0], 18).slice(0, 8) : '0'
-  const userPending = pendingReward ? formatUnits(pendingReward, 18).slice(0, 8) : '0'
-  const userLpBalance = lpBalance ? formatUnits(lpBalance, 18).slice(0, 8) : '0'
+  const userStaked = userInfo ? formatUnits((userInfo as any)[0], 18).slice(0, 8) : '0'
+  const userPending = pendingReward ? formatUnits(pendingReward as bigint, 18).slice(0, 8) : '0'
+  const userLpBalance = lpBalance ? formatUnits(lpBalance as bigint, 18).slice(0, 8) : '0'
 
   const handleDeposit = () => {
     if (!farmAddress || !amount || pool.id === undefined) return
@@ -108,8 +108,8 @@ function FarmPoolCard({ pool, farmAddress, userAddress, isMockMode, chainId }) {
     }
   }
 
-  const formatUSD = (value) => {
-    const num = parseFloat(value)
+  const formatUSD = (value: string | number) => {
+    const num = parseFloat(value.toString())
     if (num >= 1000000) {
       return `$${(num / 1000000).toFixed(1)}M`
     } else if (num >= 1000) {
@@ -315,9 +315,9 @@ export default function FarmPage() {
   const farmAddress = getProtocolAddress(chainId, 'FARM')
 
   // State
-  const [farmData, setFarmData] = useState(null)
+  const [farmData, setFarmData] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
   const [isMockMode, setIsMockMode] = useState(false)
 
   // Fetch farm data from API
@@ -345,8 +345,8 @@ export default function FarmPage() {
       })
   }, [farmAddress])
 
-  const formatUSD = (value) => {
-    const num = parseFloat(value)
+  const formatUSD = (value: string | number) => {
+    const num = parseFloat(value.toString())
     if (num >= 1000000) {
       return `$${(num / 1000000).toFixed(1)}M`
     } else if (num >= 1000) {
@@ -355,7 +355,7 @@ export default function FarmPage() {
     return `$${num.toLocaleString()}`
   }
 
-  const formatNumber = (value) => {
+  const formatNumber = (value: number) => {
     return value.toLocaleString()
   }
 
@@ -479,7 +479,7 @@ export default function FarmPage() {
         {/* Farm Pools */}
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl font-bold mb-6">Available Pools</h2>
-          {farmData.pools.map((pool, index) => (
+          {farmData.pools.map((pool: any, index: number) => (
             <FarmPoolCard
               key={pool.id !== undefined ? pool.id : `pool-${index}`}
               pool={pool}

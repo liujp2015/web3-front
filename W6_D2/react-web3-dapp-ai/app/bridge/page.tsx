@@ -138,8 +138,8 @@ export default function BridgePage() {
 
   // Transfer state
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [error, setError] = useState(null)
-  const [transfers, setTransfers] = useState([])
+  const [error, setError] = useState<string | null>(null)
+  const [transfers, setTransfers] = useState<any[]>([])
 
   // Read user token balance
   const tokenData = SUPPORTED_TOKENS.find(t => t.symbol === selectedToken)
@@ -215,7 +215,7 @@ export default function BridgePage() {
     }
   }
 
-  const handleStatusUpdate = (transferId, newStatus) => {
+  const handleStatusUpdate = (transferId: string, newStatus: string) => {
     setTransfers(prev =>
       prev.map(t => t.transferId === transferId ? { ...t, status: newStatus } : t)
     )
