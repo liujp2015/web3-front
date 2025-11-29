@@ -221,7 +221,7 @@ export default function CreateSalePage() {
         <form onSubmit={handleSubmit} className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-2xl p-8 border border-gray-100">
           <div className="mb-8">
             <div className="flex items-center mb-4 pb-3 border-b-2 border-gradient-to-r from-purple-200 to-blue-200">
-              <div className="text-2xl mr-3">🪙</div>
+              <div className="text-2xl mr-3">💰</div>
               <h2 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Token Information</h2>
             </div>
 
