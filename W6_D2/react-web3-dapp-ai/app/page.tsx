@@ -1,6 +1,12 @@
+'use client'
+
 import Link from "next/link";
+import { useAccount } from 'wagmi';
+import { ConnectButton } from '@/components/ConnectButton';
 
 export default function Home() {
+  const { isConnected } = useAccount();
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="flex flex-col items-center justify-center min-h-screen py-32 px-16">
@@ -89,11 +95,11 @@ export default function Home() {
           </Link>
         </div>
 
-        <div className="mt-12 text-center">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-xl transition-all shadow-lg">
-            Connect Wallet to Get Started
-          </button>
-        </div>
+        {!isConnected && (
+          <div className="mt-12 text-center">
+            <ConnectButton />
+          </div>
+        )}
       </div>
     </div>
   );
