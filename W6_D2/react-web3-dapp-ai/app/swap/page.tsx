@@ -84,7 +84,8 @@ export default function SwapPage() {
 
       // Try chain quote first
       if (chainQuote && !isQuoteError) {
-        setAmountOut(formatUnits(chainQuote as bigint, tokenOutData.decimals))
+        const formattedAmount = formatUnits(chainQuote as bigint, tokenOutData.decimals)
+        setAmountOut(parseFloat(formattedAmount).toFixed(4))
         setIsMockMode(false)
         setIsLoadingQuote(false)
         return
@@ -95,7 +96,7 @@ export default function SwapPage() {
         // Simple mock: use 1:1.5 ratio
         const mockRate = tokenIn === 'TKA' ? 1.5 : (1 / 1.5)
         const calculatedOut = parseFloat(amountIn) * mockRate
-        setAmountOut(calculatedOut.toFixed(6))
+        setAmountOut(calculatedOut.toFixed(4))
         setIsMockMode(true)
       } catch (error) {
         console.error('Error getting quote:', error)
