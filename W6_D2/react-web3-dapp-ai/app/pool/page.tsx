@@ -14,9 +14,9 @@ export default function PoolPage() {
   const chainId = useChainId()
   const swapAddress = getProtocolAddress(chainId, 'SWAP')
   
-  // Fixed token pair like web3-dapp
-  const tokenAAddress = getTokenAddress(chainId, 'TKA')
-  const tokenBAddress = getTokenAddress(chainId, 'TKB')
+  // Fixed token pair - use env variables directly like dashboard
+  const tokenAAddress = process.env.NEXT_PUBLIC_TOKEN_A_ADDRESS as `0x${string}`
+  const tokenBAddress = process.env.NEXT_PUBLIC_TOKEN_B_ADDRESS as `0x${string}`
 
   // State
   const [mode, setMode] = useState('add')
