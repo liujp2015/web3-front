@@ -105,7 +105,7 @@ export default function MintPage() {
     <div className="container max-w-4xl mx-auto py-8 px-4 lg:py-12">
       {/* Header */}
       <div className="text-center mb-6 lg:mb-8">
-        <div className="text-4xl lg:text-6xl mb-3 lg:mb-4">🪙</div>
+        <div className="text-4xl lg:text-6xl mb-3 lg:mb-4">💎</div>
         <h1 className="text-2xl lg:text-4xl font-bold text-gray-900 mb-3 lg:mb-4">Token Mint</h1>
         <p className="text-gray-600 text-base lg:text-lg px-4">
           Mint test tokens for development and testing
