@@ -30,6 +30,13 @@ All notable changes to react-web3-dapp-ai project will be documented in this fil
   - Smooth transitions and hover effects throughout
   - Professional UI comparable to RainbowKit
 
+#### 🔗 Dashboard Transactions Link
+- **View All Transactions Button Functionality**
+  - Fixed non-functional "View All Transactions" button in dashboard
+  - Button now opens Etherscan address page in new tab
+  - Direct link to user's transaction history on Sepolia testnet
+  - Opens at `https://sepolia.etherscan.io/address/{userAddress}`
+
 #### 🔄 LaunchPad Stats Display
 - **Swapped Goal and Raised Position**
   - Moved Goal to first position (left side)

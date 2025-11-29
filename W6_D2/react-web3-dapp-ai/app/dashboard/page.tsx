@@ -502,7 +502,10 @@ export default function DashboardPage() {
                     ))}
                   </div>
 
-                  <button className="w-full mt-6 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-700 font-semibold py-3 rounded-lg transition-all">
+                  <button 
+                    onClick={() => window.open(`https://sepolia.etherscan.io/address/${address}`, '_blank')}
+                    className="w-full mt-6 bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-700 font-semibold py-3 rounded-lg transition-all"
+                  >
                     View All Transactions
                   </button>
                 </div>
